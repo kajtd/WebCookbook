@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="">
+  <div class="min-h-screen flex flex-col justify-center items-center">
     <router-view />
   </div>
 </template>

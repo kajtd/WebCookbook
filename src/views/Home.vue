@@ -1,5 +1,7 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import LoginForm from './../components/molecules/LoginForm.vue'
+</script>
 
 <template>
-  <p>HOME</p>
+  <LoginForm />
 </template>
