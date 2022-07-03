@@ -1,47 +1,46 @@
 <template>
   <article
-    class="w-full max-w-xs bg-white flex flex-col justify-center items-center py-5 px-6 rounded-lg border-4 border-black"
+    class="w-[320px] bg-white flex flex-col justify-center items-center py-5 px-6 rounded-lg border-4 border-black"
   >
     <header class="w-full">
       <div class="flex items-center justify-center mb-8 gap-3">
-        <button class="text-gray-800 font-bold text-sm" @click="signingUp = false">Sign In</button>
-        <button class="text-gray-800 font-bold text-sm" @click="signingUp = true">Sign Up</button>
+        <button class="text-gray-800 font-bold text-sm" @click="form = availableForms[0]">Sign In</button>
+        <button class="text-gray-800 font-bold text-sm" @click="form = availableForms[1]">Sign Up</button>
       </div>
     </header>
 
-    <h2 class="text-center text-2xl font-bold">Welcome 👋</h2>
+    <h2 class="text-center text-2xl font-bold">Web Cookbook 👋</h2>
 
-    <div v-if="signingUp">
-      <p class="text-center text-gray-800 font-medium mt-1">Create a new account and start using this app!</p>
-      <form class="w-full flex flex-col justify-center mt-5" action="" @submit.prevent="handleSignUpSubmit">
-        <AppInput v-model="email" id="email" type="email" name="email" placeholder="Email" required />
-        <AppInput v-model="password" id="password" name="password" type="password" placeholder="Password" required />
+    <div class="w-full">
+      <p class="text-center text-gray-800 font-medium mt-1">{{ form.description }}</p>
+      <form class="w-full flex flex-col justify-center mt-5" action="" @submit.prevent="form.submitFunction">
+        <AppInput v-model="form.email" id="email" type="email" name="email" placeholder="Email" required />
         <AppInput
-          v-model="repeatedPassword"
+          v-if="form.password !== undefined"
+          v-model="form.password"
+          id="password"
+          name="password"
+          type="password"
+          placeholder="Password"
+          required
+        />
+        <AppInput
+          v-if="form.repeatedPassword !== undefined"
+          v-model="form.repeatedPassword"
           id="repeatedPassword"
           name="repeatedPassword"
           type="password"
           placeholder="Repeat password"
           required
         />
-        <div class="flex flex-col justify-center my-3">
-          <AppButton type="submit">Sign Up</AppButton>
-          <button class="text-gray-800 font-bold text-sm mt-4 self-center">Already have an account?</button>
-        </div>
-      </form>
-    </div>
-
-    <div v-else>
-      <p class="text-center text-gray-800 font-medium mt-1">Sign in to create recipes!</p>
-      <form class="w-full flex flex-col justify-center mt-5" action="" @submit.prevent="handleSignInSubmit">
-        <AppInput v-model="email" id="email" type="email" name="email" placeholder="Email" required />
-        <AppInput v-model="password" id="password" name="password" type="password" placeholder="Password" required />
-        <AppButton type="button" additionalClass="mt-2" @click="signInWithGoogle">
-          <span>{{ !loading ? 'Sign In With Google' : 'Signing In...' }}</span>
+        <AppButton v-if="form.value === 'sign_in'" type="button" additionalClass="mt-2" @click="signInWithGoogle">
+          <span>Sign In With Google</span>
         </AppButton>
         <div class="flex justify-between items-center mt-5">
-          <AppButton type="submit">Sign In</AppButton>
-          <button class="text-gray-800 font-bold text-sm ml-3">Forgot Password?</button>
+          <AppButton additionalClass="my-3" type="submit">{{ form.buttonText }}</AppButton>
+          <button type="button" @click="form = availableForms[2]" class="text-gray-800 font-bold text-sm ml-3">
+            Forgot Password?
+          </button>
         </div>
       </form>
     </div>
@@ -54,66 +53,104 @@ import {
   provider,
   signInWithPopup,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail
 } from '../../firebase'
 import { ref } from 'vue'
 import AppInput from '../atoms/AppInput.vue'
 import AppButton from '../atoms/AppButton.vue'
 import { validateEmail } from '../../utils/util'
+import Form from './../../types/Form'
+import { useStore } from './../../store/index'
 
-let signingUp = ref(false)
-let loading = ref(false)
-let email = ref('')
-let password = ref('')
-let repeatedPassword = ref('')
+const store = useStore()
+
+const availableForms = ref<Form[]>([
+  {
+    value: 'sign_in',
+    description: 'Sign in to create recipes!',
+    email: '',
+    password: '',
+    forgetPasswordButton: true,
+    buttonText: 'Sign In',
+    submitFunction: () => handleSignInSubmit()
+  },
+  {
+    value: 'sign_up',
+    description: 'Create a new account and start using this app!',
+    email: '',
+    password: '',
+    repeatedPassword: '',
+    forgetPasswordButton: false,
+    buttonText: 'Sign Up',
+    submitFunction: () => handleSignUpSubmit()
+  },
+  {
+    value: 'forget_password',
+    description: 'Enter your email to reset your password',
+    email: '',
+    buttonText: 'Reset',
+    submitFunction: () => handlePasswordResetSubmit()
+  }
+])
+
+const form = ref<Form>(availableForms.value[0])
 
 const clearForm = (): void => {
-  email.value = ''
-  password.value = ''
-  repeatedPassword.value = ''
+  if (form.value.email !== undefined) form.value.email = ''
+  if (form.value.password !== undefined) form.value.password = ''
+  if (form.value.repeatedPassword !== undefined) form.value.repeatedPassword = ''
 }
 
 const signInWithGoogle = () => {
-  loading.value = true
+  store.loading = true
   signInWithPopup(auth, provider)
-    .then(result => {
-      console.log(result.user)
-      loading.value = false
+    .then(userCredential => {
+      store.user = userCredential.user
+      store.loading = false
     })
     .catch(error => {
-      loading.value = false
+      store.loading = false
       console.log(error)
     })
 }
 
 const createNewUser = (): void => {
-  console.log(email.value)
-  createUserWithEmailAndPassword(auth, email.value, password.value)
+  store.loading = true
+  createUserWithEmailAndPassword(auth, form.value.email, form.value.password as string)
     .then(userCredential => {
       clearForm()
-      console.log(userCredential)
+      store.user = userCredential.user
+      store.loading = false
     })
     .catch(error => {
       console.log(error)
+      store.loading = false
     })
 }
 
 const signInWithPassword = (): void => {
-  signInWithEmailAndPassword(auth, email.value, password.value)
+  store.loading = true
+  signInWithEmailAndPassword(auth, form.value.email, form.value.password as string)
     .then(userCredential => {
       clearForm()
-      console.log(userCredential)
+      store.user = userCredential.user
+      store.loading = false
     })
     .catch(error => {
       console.log(error)
+      store.loading = false
     })
 }
 
 const handleSignInSubmit = () => {
-  console.log(email.value)
-
-  if (!validateEmail(email.value)) {
+  if (!validateEmail(form.value.email)) {
     console.log('email error')
+    return
+  }
+
+  if (!form.value.password) {
+    console.log('password error')
     return
   }
 
@@ -121,14 +158,29 @@ const handleSignInSubmit = () => {
 }
 
 const handleSignUpSubmit = () => {
-  if (!validateEmail(email.value)) {
+  if (!validateEmail(form.value.email)) {
     console.log('email error')
     return
   }
-  if (password.value.length < 8 || password.value !== repeatedPassword.value) {
+  if ((form.value.password as string).length < 8 || form.value.password !== form.value.repeatedPassword) {
     console.log('password error')
     return
   }
   createNewUser()
+}
+
+const handlePasswordResetSubmit = () => {
+  if (!validateEmail(form.value.email)) {
+    console.log('email error')
+    return
+  }
+  sendPasswordResetEmail(auth, form.value.email)
+    .then(() => {
+      console.log('email sent')
+      clearForm()
+    })
+    .catch(error => {
+      console.log(error)
+    })
 }
 </script>

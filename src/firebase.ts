@@ -5,7 +5,8 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail
 } from 'firebase/auth'
 import { getDatabase } from 'firebase/database'
 
@@ -29,4 +30,12 @@ const provider = new GoogleAuthProvider()
 
 const database = getDatabase(app)
 
-export { auth, provider, signInWithPopup, database, createUserWithEmailAndPassword, signInWithEmailAndPassword }
+export {
+  auth,
+  provider,
+  signInWithPopup,
+  database,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail
+}
