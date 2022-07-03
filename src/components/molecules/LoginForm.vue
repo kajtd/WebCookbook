@@ -37,12 +37,26 @@
           <span>Sign In With Google</span>
         </AppButton>
         <div class="flex justify-between items-center mt-5">
-          <AppButton additionalClass="my-3" type="submit">{{ form.buttonText }}</AppButton>
-          <button type="button" @click="form = availableForms[2]" class="text-gray-800 font-bold text-sm ml-3">
+          <AppButton additionalClass="my-3 flex-1" type="submit">{{ form.buttonText }}</AppButton>
+          <button
+            v-show="form.forgetPasswordButton"
+            type="button"
+            @click="form = availableForms[2]"
+            class="text-gray-800 font-bold text-sm ml-5"
+          >
             Forgot Password?
           </button>
         </div>
       </form>
+      <p v-show="errorMessage" class="text-center font-bold mt-3 border-primary border-4 p-3 rounded-lg bg-red-100">
+        {{ errorMessage }}👮‍♂️
+      </p>
+      <p
+        v-show="successMessage && form.value === 'forget_password'"
+        class="text-center font-bold mt-3 border-green-500 border-4 p-3 rounded-lg bg-green-100"
+      >
+        {{ successMessage }}👏
+      </p>
     </div>
   </article>
 </template>
@@ -95,11 +109,15 @@ const availableForms = ref<Form[]>([
 ])
 
 const form = ref<Form>(availableForms.value[0])
+const errorMessage = ref('')
+const successMessage = ref('')
 
 const clearForm = (): void => {
   if (form.value.email !== undefined) form.value.email = ''
   if (form.value.password !== undefined) form.value.password = ''
   if (form.value.repeatedPassword !== undefined) form.value.repeatedPassword = ''
+  errorMessage.value = ''
+  successMessage.value = ''
 }
 
 const signInWithGoogle = () => {
@@ -112,6 +130,7 @@ const signInWithGoogle = () => {
     .catch(error => {
       store.loading = false
       console.log(error)
+      errorMessage.value = 'Something went wrong, please try again'
     })
 }
 
@@ -126,6 +145,7 @@ const createNewUser = (): void => {
     .catch(error => {
       console.log(error)
       store.loading = false
+      errorMessage.value = 'Unable to create a new user, please try again'
     })
 }
 
@@ -140,17 +160,18 @@ const signInWithPassword = (): void => {
     .catch(error => {
       console.log(error)
       store.loading = false
+      errorMessage.value = 'Unable to sign in, please try again'
     })
 }
 
 const handleSignInSubmit = () => {
   if (!validateEmail(form.value.email)) {
-    console.log('email error')
+    errorMessage.value = 'Please enter a valid email'
     return
   }
 
-  if (!form.value.password) {
-    console.log('password error')
+  if ((form.value.password as string).length < 8) {
+    errorMessage.value = 'Please enter a valid password'
     return
   }
 
@@ -159,11 +180,11 @@ const handleSignInSubmit = () => {
 
 const handleSignUpSubmit = () => {
   if (!validateEmail(form.value.email)) {
-    console.log('email error')
+    errorMessage.value = 'Please enter a valid email'
     return
   }
   if ((form.value.password as string).length < 8 || form.value.password !== form.value.repeatedPassword) {
-    console.log('password error')
+    errorMessage.value = 'Please enter valid passwords that match'
     return
   }
   createNewUser()
@@ -171,16 +192,17 @@ const handleSignUpSubmit = () => {
 
 const handlePasswordResetSubmit = () => {
   if (!validateEmail(form.value.email)) {
-    console.log('email error')
+    errorMessage.value = 'Please enter a valid email'
     return
   }
   sendPasswordResetEmail(auth, form.value.email)
     .then(() => {
-      console.log('email sent')
       clearForm()
+      successMessage.value = 'Password reset email sent'
     })
     .catch(error => {
       console.log(error)
+      errorMessage.value = 'Something went wrong, please try again'
     })
 }
 </script>
