@@ -3,9 +3,9 @@
     <input
       type="checkbox"
       id="nav-checkbox"
-      @click="$emit('update:modelValue', !modelValue)"
+      @click="$emit('toggleMobileNav')"
       class="hidden nav-checkbox"
-      :value="modelValue"
+      :checked="checked"
     />
     <label class="hamburger block relative w-[32px] h-[32px] z-50 cursor-pointer" for="nav-checkbox">
       <button class="lines block cursor-pointer">
@@ -22,9 +22,9 @@
 
 <script setup lang="ts">
 defineProps<{
-  modelValue: boolean
+  checked: boolean
 }>()
-defineEmits(['update:modelValue'])
+defineEmits(['toggleMobileNav'])
 </script>
 
 <style scoped>
