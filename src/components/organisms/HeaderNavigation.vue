@@ -1,6 +1,6 @@
 <template>
   <header
-    class="flex items-center justify-between w-full mx-auto px-4 md:px-8 py-6 bg-orangeLight border-b-2 border-black"
+    class="flex items-center justify-between w-full mx-auto px-4 md:px-8 py-6 bg-orangeLight border-b-4 border-black"
   >
     <div class="max-w-5xl w-full mx-auto flex justify-between">
       <AppLogo />
