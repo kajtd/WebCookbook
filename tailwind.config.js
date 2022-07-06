@@ -7,7 +7,8 @@ module.exports = {
       colors: {
         primary: '#E1434B',
         orangeLight: '#fbd4bc',
-        blueLight: '#d5dbed'
+        blueLight: '#d5dbed',
+        pinkLight: 'rgba(254,226,226,0.4)'
       }
     }
   },
