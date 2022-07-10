@@ -9,13 +9,9 @@
       <img :src="image" :alt="title" class="h-full rounded-xl object-cover min-w-[120px] w-full" />
       <div class="h-full w-full flex flex-col justify-center pl-5">
         <p class="text-xl font-bold mt-10 mb-auto">{{ title }}</p>
-        <p class="text-xs font-semibold text-gray-800 flex items-center gap-2">
-          <img
-            src="https://avataaars.io/?avatarStyle=Circle&topType=LongHairFroBand&accessoriesType=Blank&hairColor=BrownDark&facialHairType=Blank&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Default&skinColor=Light"
-            alt=""
-            class="w-8 h-8 rounded-full border-2 border-black p-[2px]"
-          />
-          {{ author }}
+        <p class="text-xs font-semibold text-gray-800 flex items-center">
+          <img :src="authorPhotoUrl" alt="" class="w-6 h-6 rounded-full" />
+          <span class="self-end">{{ authorName }}</span>
         </p>
       </div>
     </div>
@@ -36,9 +32,10 @@ import { Icon } from '@iconify/vue'
 import AppButton from '../atoms/AppButton.vue'
 
 defineProps<{
-  id: number
+  id: string
   title: string
-  author: string
+  authorName: string
+  authorPhotoUrl: string
   image: string
 }>()
 </script>
