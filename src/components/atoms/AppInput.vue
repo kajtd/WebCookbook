@@ -19,7 +19,7 @@ defineProps<{
   id: string
   ref?: string
   type?: string
-  modelValue: string
+  modelValue: string | number
   placeholder?: string
   disabled?: boolean
   required?: boolean

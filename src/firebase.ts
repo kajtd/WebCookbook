@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
+
 import {
   getAuth,
   GoogleAuthProvider,
@@ -8,8 +9,9 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail
 } from 'firebase/auth'
-import { getDatabase } from 'firebase/database'
 
+import { getFirestore, doc, collection, onSnapshot, setDoc } from 'firebase/firestore'
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -28,14 +30,25 @@ const auth = getAuth(app)
 
 const provider = new GoogleAuthProvider()
 
-const database = getDatabase(app)
+const database = getFirestore(app)
+
+// Initialize Cloud Storage and get a reference to the service
+const storage = getStorage()
 
 export {
   auth,
   provider,
   signInWithPopup,
   database,
+  doc,
+  uploadBytes,
+  getDownloadURL,
+  ref,
+  setDoc,
+  collection,
+  onSnapshot,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  storage
 }
