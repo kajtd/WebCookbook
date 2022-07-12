@@ -148,15 +148,15 @@ const signInWithGoogle = (): void => {
 const createNewUser = async (): Promise<void> => {
   store.loading = true
   await createUserWithEmailAndPassword(auth, form.value.email, form.value.password as string)
-    .then(userCredential => {
+    .then(res => {
       if (auth.currentUser) {
         updateProfile(auth.currentUser, {
           displayName: form.value.login,
-          photoURL: `https://ui-avatars.com/api/?name=${form.value.login}`
+          photoURL: `https://ui-avatars.com/api/?name=${form.value.login}&background=E1434B&color=fff`
         })
       }
       clearForm()
-      store.user = userCredential.user
+      if (auth.currentUser) store.user = auth.currentUser
       store.loading = false
     })
     .catch(error => {

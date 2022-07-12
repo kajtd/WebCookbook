@@ -2,7 +2,7 @@
   <header
     class="flex items-center justify-between w-full mx-auto px-4 md:px-8 py-6 bg-orangeLight border-b-4 border-black"
   >
-    <div class="max-w-5xl w-full mx-auto flex justify-between">
+    <div class="max-w-5xl w-full mx-auto flex items-center justify-between">
       <AppLogo />
       <HamburgerMenuButton :checked="mobileNav" @toggle-mobile-nav="toggleMobileNav" />
       <nav class="hidden md:flex items-center justify-start">
@@ -16,7 +16,11 @@
           >
             Login
           </AppButton>
-          <img v-else :src="store.user.photoURL || ''" class="rounded-full h-8 w-8 border-2 border-black" />
+          <img
+            v-else-if="store.user.photoURL"
+            :src="store.user.photoURL"
+            class="rounded-full h-10 w-10 border-2 border-black"
+          />
         </ul>
       </nav>
       <transition name="mobile-nav">
@@ -32,7 +36,18 @@
               </button>
             </li>
           </ul>
-          <AppButton additionalClass="mt-auto self-start text-xl" href="/login">Login</AppButton>
+          <AppButton
+            v-if="Object.keys(store.user).length === 0 && store.user.constructor === Object"
+            additionalClass="mt-auto self-start text-xl"
+            @click="$emit('toggleLoginPopup')"
+          >
+            Login
+          </AppButton>
+          <img
+            v-else-if="store.user.photoURL"
+            :src="store.user.photoURL"
+            class="rounded-full h-12 w-12 border-2 border-black mt-auto"
+          />
         </nav>
       </transition>
     </div>

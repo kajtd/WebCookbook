@@ -8,7 +8,10 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
-  updateProfile
+  updateProfile,
+  setPersistence,
+  browserLocalPersistence,
+  onAuthStateChanged
 } from 'firebase/auth'
 
 import { getFirestore, doc, collection, onSnapshot, setDoc } from 'firebase/firestore'
@@ -35,6 +38,13 @@ const database = getFirestore(app)
 
 // Initialize Cloud Storage and get a reference to the service
 const storage = getStorage()
+
+// save the user's profile to the local storage after sign in
+onAuthStateChanged(auth, user => {
+  if (user) {
+    setPersistence(auth, browserLocalPersistence)
+  }
+})
 
 export {
   auth,
