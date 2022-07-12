@@ -1,0 +1,71 @@
+<template>
+  <FullPageTemplate>
+    <main class="mt-[15vh] px-4">
+      <article class="mx-auto w-full max-w-[720px] flex flex-col justify-center items-center">
+        <header class="w-full !max-w-none mb-16">
+          <div class="w-full mx-auto">
+            <h2 class="font-semibold text-slate-900 text-3xl sm:text-5xl">
+              {{ recipe.title }}
+            </h2>
+            <h3 class="font-semibold text-black text-lg my-6">
+              {{ recipe.description }}
+            </h3>
+          </div>
+          <img :src="recipe.image" :alt="recipe.title" class="rounded-lg object-contain w-full" />
+        </header>
+        <section>
+          <h3 class="my-2 sm:my-5 text-black text-2xl sm:text-3xl font-semibold">Ingredients and preparation</h3>
+          <ul>
+            <li v-for="(ingredient, index) in recipe.ingredients" :key="index">
+              <p class="text-xl">
+                {{ ingredient.name }} - <span class="font-semibold">{{ ingredient.amount }}</span>
+              </p>
+            </li>
+          </ul>
+          <p class="text-lg mt-4">{{ recipe.preparation }}</p>
+        </section>
+        <footer class="mt-24 w-full border-t-2 border-gray-700 mb-36">
+          <div class="flex items-center justify-between py-5">
+            <a
+              :href="tweetLink"
+              class="!no-underline border-2 border-gray-900 bg-primary text-gray-100 font-semibold py-2 px-6 rounded-lg text-sm flex items-center justify-center"
+            >
+              <span class="mr-[5px]">Tweet this recipe</span>
+              <Icon icon="akar-icons:twitter-fill" />
+            </a>
+          </div>
+          <p>Comment this recipe if you liked it!</p>
+        </footer>
+      </article>
+    </main>
+  </FullPageTemplate>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import FullPageTemplate from '../components/templates/FullPageTemplate.vue'
+import { doc, getDoc } from 'firebase/firestore'
+import { database } from './../firebase'
+import { Recipe } from './../types/Recipe'
+import { Icon } from '@iconify/vue'
+
+const route = useRoute()
+const blogId = ref('')
+const recipe = ref<Recipe>({} as Recipe)
+
+const tweetLink =
+  'https://twitter.com/intent/tweet?text=' +
+  encodeURIComponent('Check out this recipe: ' + 'pageName/' + route.fullPath)
+
+onMounted(async () => {
+  blogId.value = route.params.blogid as string
+
+  const docRef = doc(database, 'Recipes', blogId.value)
+  const docSnap = await getDoc(docRef)
+
+  if (docSnap.exists()) {
+    recipe.value = docSnap.data() as Recipe
+  }
+})
+</script>

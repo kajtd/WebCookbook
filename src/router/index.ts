@@ -8,6 +8,11 @@ const routes: RouteRecordRaw[] = [
     name: 'Home',
     beforeEnter: checkAuth,
     component: () => import('../views/Home.vue')
+  },
+  {
+    path: '/recipes/:blogid',
+    name: 'Recipe',
+    component: () => import('../views/Recipe.vue')
   }
 ]
 
