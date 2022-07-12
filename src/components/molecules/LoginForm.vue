@@ -33,6 +33,15 @@
           placeholder="Repeat password"
           required
         />
+        <AppInput
+          v-if="form.login !== undefined"
+          v-model="form.login"
+          id="login"
+          name="login"
+          type="text"
+          placeholder="Login"
+          required
+        />
         <AppButton v-if="form.value === 'sign_in'" type="button" additionalClass="mt-2" @click="signInWithGoogle">
           <span>Sign In With Google</span>
         </AppButton>
@@ -68,18 +77,19 @@ import {
   signInWithPopup,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  updateProfile
 } from '../../firebase'
 import { ref } from 'vue'
 import AppInput from '../atoms/AppInput.vue'
 import AppButton from '../atoms/AppButton.vue'
 import { validateEmail } from '../../utils/util'
-import Form from './../../types/Form'
+import UserForm from './../../types/UserForm'
 import { useStore } from './../../store/index'
 
 const store = useStore()
 
-const availableForms = ref<Form[]>([
+const availableForms = ref<UserForm[]>([
   {
     value: 'sign_in',
     description: 'Sign in to create recipes!',
@@ -93,6 +103,7 @@ const availableForms = ref<Form[]>([
     value: 'sign_up',
     description: 'Create a new account and start using this app!',
     email: '',
+    login: '',
     password: '',
     repeatedPassword: '',
     forgetPasswordButton: false,
@@ -108,7 +119,7 @@ const availableForms = ref<Form[]>([
   }
 ])
 
-const form = ref<Form>(availableForms.value[0])
+const form = ref<UserForm>(availableForms.value[0])
 const errorMessage = ref('')
 const successMessage = ref('')
 
@@ -120,12 +131,12 @@ const clearForm = (): void => {
   successMessage.value = ''
 }
 
-const signInWithGoogle = () => {
+const signInWithGoogle = (): void => {
   store.loading = true
   signInWithPopup(auth, provider)
     .then(userCredential => {
-      store.user = userCredential.user
       store.loading = false
+      store.user = userCredential.user
     })
     .catch(error => {
       store.loading = false
@@ -134,10 +145,16 @@ const signInWithGoogle = () => {
     })
 }
 
-const createNewUser = (): void => {
+const createNewUser = async (): Promise<void> => {
   store.loading = true
-  createUserWithEmailAndPassword(auth, form.value.email, form.value.password as string)
+  await createUserWithEmailAndPassword(auth, form.value.email, form.value.password as string)
     .then(userCredential => {
+      if (auth.currentUser) {
+        updateProfile(auth.currentUser, {
+          displayName: form.value.login,
+          photoURL: `https://ui-avatars.com/api/?name=${form.value.login}`
+        })
+      }
       clearForm()
       store.user = userCredential.user
       store.loading = false
@@ -154,8 +171,8 @@ const signInWithPassword = (): void => {
   signInWithEmailAndPassword(auth, form.value.email, form.value.password as string)
     .then(userCredential => {
       clearForm()
-      store.user = userCredential.user
       store.loading = false
+      store.user = userCredential.user
     })
     .catch(error => {
       console.log(error)

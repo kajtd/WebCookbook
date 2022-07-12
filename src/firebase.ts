@@ -7,7 +7,8 @@ import {
   signInWithPopup,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  updateProfile
 } from 'firebase/auth'
 
 import { getFirestore, doc, collection, onSnapshot, setDoc } from 'firebase/firestore'
@@ -50,5 +51,6 @@ export {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
-  storage
+  storage,
+  updateProfile
 }
