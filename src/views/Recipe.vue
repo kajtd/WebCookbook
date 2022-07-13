@@ -3,7 +3,7 @@
     <main class="mt-[15vh] px-4">
       <article class="mx-auto w-full max-w-[720px] flex flex-col justify-center items-center">
         <header class="w-full !max-w-none mb-16">
-          <div class="w-full mx-auto">
+          <div class="w-full mx-auto mb-12">
             <h2 class="font-semibold text-slate-900 text-3xl sm:text-5xl">
               {{ recipe.title }}
             </h2>
@@ -15,7 +15,7 @@
         </header>
         <section>
           <h3 class="my-2 sm:my-5 text-black text-2xl sm:text-3xl font-semibold">Ingredients and preparation</h3>
-          <ul>
+          <ul class="border-4 border-black p-4 rounded-lg my-6 bg-blueLight">
             <li v-for="(ingredient, index) in recipe.ingredients" :key="index">
               <p class="text-xl">
                 {{ ingredient.name }} - <span class="font-semibold">{{ ingredient.amount }}</span>
@@ -24,7 +24,7 @@
           </ul>
           <p class="text-lg mt-4">{{ recipe.preparation }}</p>
         </section>
-        <footer class="mt-24 w-full border-t-2 border-gray-700 mb-36">
+        <footer class="mt-24 w-full border-t-4 border-gray-700 mb-36">
           <div class="flex items-center justify-between py-5">
             <a
               :href="tweetLink"
@@ -34,7 +34,8 @@
               <Icon icon="akar-icons:twitter-fill" />
             </a>
           </div>
-          <p>Comment this recipe if you liked it!</p>
+          <h4 class="my-8 text-xl font-semibold">Remember to let the author of this recipe know if you liked it!</h4>
+          <CommentsSection />
         </footer>
       </article>
     </main>
@@ -49,6 +50,7 @@ import { doc, getDoc } from 'firebase/firestore'
 import { database } from './../firebase'
 import { Recipe } from './../types/Recipe'
 import { Icon } from '@iconify/vue'
+import CommentsSection from '../components/organisms/CommentsSection.vue'
 
 const route = useRoute()
 const blogId = ref('')
