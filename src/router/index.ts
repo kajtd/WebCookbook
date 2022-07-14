@@ -8,12 +8,26 @@ const routes: RouteRecordRaw[] = [
     name: 'Home',
     beforeEnter: checkAuth,
     component: () => import('../views/Home.vue')
+  },
+  {
+    path: '/recipes/:blogid',
+    name: 'Recipe',
+    component: () => import('../views/Recipe.vue')
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    if (to.hash) {
+      return {
+        el: to.hash
+      }
+    }
+    // always scroll to top
+    return { top: 0 }
+  }
 })
 
 export default router
