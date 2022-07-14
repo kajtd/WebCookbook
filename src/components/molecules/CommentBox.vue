@@ -4,7 +4,7 @@
       v-model="comment.text"
       id="comment-box"
       placeholder="Enter comment!"
-      class="w-full !text-xl !border-2"
+      class="w-full sm:!text-xl !border-2"
       :rows="4"
     />
     <AppButton type="submit">Post comment!</AppButton>
