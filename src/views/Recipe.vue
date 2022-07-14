@@ -13,7 +13,7 @@
           </div>
           <img :src="recipe.image" :alt="recipe.title" class="rounded-lg object-contain w-full" />
         </header>
-        <section>
+        <section class="w-full">
           <h3 class="my-2 sm:my-5 text-black text-2xl sm:text-3xl font-semibold">Ingredients and preparation</h3>
           <ul class="border-4 border-black p-4 rounded-lg my-6 bg-blueLight">
             <li v-for="(ingredient, index) in recipe.ingredients" :key="index">
@@ -35,7 +35,7 @@
             </a>
           </div>
           <h4 class="my-8 text-xl font-semibold">Remember to let the author of this recipe know if you liked it!</h4>
-          <CommentsSection />
+          <CommentsSection :blog-id="blogId" />
         </footer>
       </article>
     </main>

@@ -3,6 +3,7 @@ interface Comment {
   authorName: string
   authorPhotoUrl: string
   createdAt: Date
+  blogId: string
 }
 
 export default Comment
