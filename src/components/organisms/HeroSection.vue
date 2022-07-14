@@ -1,6 +1,6 @@
 <template>
   <section
-    class="border-0 sm:border-4 border-black rounded-3xl bg-blueLight p-4 sm:p-12 -mt-6 w-full max-w-5xl flex flex-col items-center gap-8 z-[-1]"
+    class="border-0 sm:border-4 border-black rounded-3xl bg-pinkLight p-4 sm:p-6 -mt-6 w-full max-w-5xl flex flex-col items-center gap-8 z-[-1]"
   >
     <div class="text-center mt-12">
       <h2 class="text-3xl sm:text-5xl font-bold">Not sure what to eat? 👨‍🍳</h2>
@@ -12,12 +12,12 @@
       <img
         src="https://blush.design/api/download?shareUri=QsRbEmDzq&w=800&h=800&fm=png"
         alt=""
-        class="my-8 h-24 sm:h-48"
+        class="my-5 h-24 sm:h-36"
       />
       <img
         src="https://blush.design/api/download?shareUri=CvkJHK6OO&w=800&h=800&fm=png"
         alt=""
-        class="my-8 h-24 sm:h-48"
+        class="my-5 h-24 sm:h-36"
       />
     </div>
     <SearchBar />
