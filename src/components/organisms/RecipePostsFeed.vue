@@ -8,6 +8,7 @@
       :authorName="recipe.authorName"
       :authorPhotoUrl="recipe.authorPhotoUrl"
       :image="recipe.image"
+      :likes="recipe.likes"
     />
   </section>
 </template>

@@ -79,7 +79,7 @@ const recipe = ref<Recipe>({
   comments: [],
   cookingTime: 0,
   image: '',
-  likes: 0,
+  likes: [],
   preparation: ''
 })
 
