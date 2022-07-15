@@ -7,7 +7,7 @@ export interface Recipe {
   comments?: string[]
   cookingTime: number
   image: string
-  likes: number
+  likes: string[]
   preparation: string
 }
 
