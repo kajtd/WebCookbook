@@ -5,16 +5,14 @@
     <AppFooter @toggle-login-popup="toggleLoginPopup" />
     <AppButton
       additionalClass="!rounded-full bottom-4 right-4 fixed h-16 w-16 !p-0 !shadow-xl"
-      @click="toggleCreateRecipePopup"
+      @click="toggleCreateRecipeForm"
     >
       <Icon icon="akar-icons:circle-plus" class="text-2xl" />
     </AppButton>
     <AppPopup :popup-visible="loginPopupVisible" @toggle-popup="toggleLoginPopup">
       <LoginForm />
     </AppPopup>
-    <AppPopup :popup-visible="createRecipePopupVisible" @toggle-popup="toggleCreateRecipePopup">
-      <CreateRecipeForm />
-    </AppPopup>
+    <CreateRecipeForm :form-visible="createRecipeFormVisible" @toggle-form="toggleCreateRecipeForm" />
   </div>
 </template>
 
@@ -29,13 +27,15 @@ import AppButton from '../atoms/AppButton.vue'
 import CreateRecipeForm from '../organisms/CreateRecipeForm.vue'
 
 const loginPopupVisible = ref(false)
-const createRecipePopupVisible = ref(false)
+const createRecipeFormVisible = ref(false)
 
 const toggleLoginPopup = (): void => {
   loginPopupVisible.value = !loginPopupVisible.value
+  document.body.classList.toggle('fixed-bg')
 }
 
-const toggleCreateRecipePopup = (): void => {
-  createRecipePopupVisible.value = !createRecipePopupVisible.value
+const toggleCreateRecipeForm = (): void => {
+  createRecipeFormVisible.value = !createRecipeFormVisible.value
+  document.body.classList.toggle('fixed-bg')
 }
 </script>

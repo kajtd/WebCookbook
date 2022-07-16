@@ -6,6 +6,8 @@ export interface Recipe {
   authorPhotoUrl: string
   comments?: string[]
   cookingTime: number
+  servings: number
+  calories: number
   image: string
   likes: string[]
   preparation: string
