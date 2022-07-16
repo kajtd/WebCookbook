@@ -4,10 +4,10 @@ export interface Recipe {
   ingredients: Ingredient[]
   authorName: string
   authorPhotoUrl: string
-  comments?: string[]
-  cookingTime: number
-  servings: number
-  calories: number
+  comments: string[]
+  cookingTime?: number
+  servings?: number
+  calories?: number
   image: string
   likes: string[]
   preparation: string

@@ -1,14 +1,14 @@
 <template>
   <transition name="create-recipe-form">
     <div v-show="formVisible" class="fixed top-0 left-0 right-0 bottom-0 z-50 w-full overflow-y-scroll bg-white">
-      <article class="flex flex-col justify-between items-center">
+      <article class="flex flex-col justify-between items-center relative">
         <header class="w-full bg-blueLight border-b-4 border-black">
           <div class="max-w-5xl flex items-center justify-between py-7 px-4 md:px-8 mx-auto">
-            <div class="flex items-center justify-between w-full md:w-auto gap-5">
+            <div class="flex flex-row-reverse md:flex-row items-center justify-between w-full md:w-auto gap-5">
               <button type="button" class="cursor-pointer" @click="$emit('toggleForm')">
                 <Icon icon="eva:close-fill" class="text-4xl" />
               </button>
-              <h2 class="text-lg md:text-2xl font-bold">Create new recipe</h2>
+              <h2 class="text-2xl font-bold">Create new recipe</h2>
             </div>
             <AppButton additionalClass="!hidden md:!flex" form="create_form" type="submit">Post recipe!</AppButton>
           </div>
@@ -21,9 +21,15 @@
             @submit.prevent="handleSubmitForm"
           >
             <div class="flex flex-col row-start-1 row-end-2">
-              <label for="title" class="font-semibold text-lg mb-1">Title</label>
+              <label for="title" class="font-semibold text-lg mb-1">
+                Title
+                <span class="text-red-500 font-bold relative bottom-1 right-1">*</span>
+              </label>
               <AppInput v-model="recipe.title" id="title" name="title" type="text" placeholder="Title" required />
-              <label for="description" class="font-semibold text-lg mb-1">Description</label>
+              <label for="description" class="font-semibold text-lg mb-1">
+                Description
+                <span class="text-red-500 font-bold relative bottom-1 right-1">*</span>
+              </label>
               <AppTextarea
                 v-model="recipe.description"
                 id="description"
@@ -34,45 +40,45 @@
               />
               <div class="flex flex-col lg:flex-row lg:items-center justify-between">
                 <div class="flex flex-col">
-                  <label for="cooking_time" class="font-semibold text-lg mb-1">Cooking time</label>
+                  <label for="cooking_time" class="font-semibold text-lg mb-1"> Cooking time </label>
                   <AppInput
-                    v-model="recipe.cookingTime"
+                    v-model="(recipe.cookingTime as number)"
                     id="cooking_time"
                     name="cooking_time"
                     class="w-[120px]"
                     type="time"
-                    required
                   />
                 </div>
                 <div class="flex flex-col">
                   <label for="servings" class="font-semibold text-lg mb-1">Servings</label>
                   <AppInput
-                    v-model="recipe.servings"
+                    v-model="(recipe.servings as number)"
                     id="servings"
                     name="servings"
                     class="w-[120px]"
                     type="number"
                     placeholder="Servings"
-                    required
                   />
                 </div>
                 <div class="flex flex-col">
                   <label for="calories" class="font-semibold text-lg mb-1">Calories</label>
                   <AppInput
-                    v-model="recipe.calories"
+                    v-model="(recipe.calories as number)"
                     id="calories"
                     name="calories"
                     class="w-[120px]"
                     type="number"
                     placeholder="Calories"
-                    required
                   />
                 </div>
               </div>
             </div>
             <div class="w-full flex flex-col row-start-2 col-start-1">
               <div class="flex items-center justify-between">
-                <span class="text-2xl font-semibold">Ingredients</span>
+                <span class="text-2xl font-semibold">
+                  Ingredients
+                  <span class="text-red-500 font-bold relative bottom-1 right-1">*</span>
+                </span>
                 <AppButton additionalClass="mt-4 mb-1 self-end !p-1" type="button" @click="addNewIngredient">
                   <Icon icon="eva:plus-circle-outline" class="text-lg" />
                 </AppButton>
@@ -95,7 +101,7 @@
                   <AppInput
                     v-model="ingredient.amount"
                     id="ingredient_amount"
-                    type="number"
+                    type="string"
                     placeholder="Amount"
                     class="w-16 md:w-auto"
                   />
@@ -106,7 +112,10 @@
               </div>
             </div>
             <div class="flex flex-col h-full row-start-1 row-end-3">
-              <label for="preparation" class="font-semibold text-lg mb-1">Preparation</label>
+              <label for="preparation" class="font-semibold text-lg mb-1">
+                Preparation
+                <span class="text-red-500 font-bold relative bottom-1 right-1">*</span>
+              </label>
               <AppTextarea
                 v-model="recipe.preparation"
                 id="preparation"
@@ -118,15 +127,22 @@
                 class="w-full h-full mb-0"
               />
             </div>
-            <input id="image" ref="file" name="image" type="file" class="mb-3 mt-12" required @change="updateImage" />
+            <div class="flex flex-col mt-5">
+              <label for="description" class="font-semibold text-lg mb-1">
+                Image
+                <span class="text-red-500 font-bold relative bottom-1 right-1">*</span>
+              </label>
+              <input id="image" ref="file" name="image" type="file" class="mb-3" required @change="updateImage" />
+            </div>
+            <p
+              v-show="errorMessage"
+              class="text-center font-bold border-primary border-4 p-3 rounded-lg bg-red-100 flex items-center justify-center"
+            >
+              {{ errorMessage }}👮‍♂️
+            </p>
             <AppButton additionalClass="my-4 md:!hidden" form="create_form" type="submit">Post recipe!</AppButton>
           </form>
         </div>
-        <footer class="w-full">
-          <p v-show="errorMessage" class="text-center font-bold mt-3 border-primary border-4 p-3 rounded-lg bg-red-100">
-            {{ errorMessage }}👮‍♂️
-          </p>
-        </footer>
       </article>
     </div>
   </transition>
@@ -212,10 +228,9 @@ const handleSubmitForm = async () => {
     !recipe.value.title ||
     !recipe.value.description ||
     recipe.value.ingredients.length === 0 ||
-    !recipe.value.cookingTime ||
     !recipe.value.preparation
   ) {
-    errorMessage.value = 'Please fill in all fields'
+    errorMessage.value = 'Please fill in all necessary fields'
     return
   }
   await createRecipe().then(() => {
