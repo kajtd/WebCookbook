@@ -9,5 +9,5 @@ body {
 }
 
 body.fixed-bg {
-  @apply fixed overflow-y-scroll w-full;
+  @apply overflow-hidden;
 }
