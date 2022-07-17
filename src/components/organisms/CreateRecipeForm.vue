@@ -5,7 +5,7 @@
         <header class="w-full bg-blueLight border-b-4 border-black">
           <div class="max-w-5xl flex items-center justify-between py-7 px-4 md:px-8 mx-auto">
             <div class="flex flex-row-reverse md:flex-row items-center justify-between w-full md:w-auto gap-5">
-              <button type="button" class="cursor-pointer" @click="$emit('toggleForm')">
+              <button type="button" class="cursor-pointer" @click="handleFormClose">
                 <Icon icon="eva:close-fill" class="text-4xl" />
               </button>
               <h2 class="text-2xl font-bold">Create new recipe</h2>
@@ -130,9 +130,16 @@
             <div class="flex flex-col mt-5">
               <label for="description" class="font-semibold text-lg mb-1">
                 Image
-                <span class="text-red-500 font-bold relative bottom-1 right-1">*</span>
+                <span v-show="!store.editingRecipe" class="text-red-500 font-bold relative bottom-1 right-1">*</span>
               </label>
-              <input id="image" ref="file" name="image" type="file" class="mb-3" required @change="updateImage" />
+              <input
+                id="image"
+                name="image"
+                type="file"
+                class="mb-3"
+                :required="!store.editingRecipe"
+                @change="updateImage"
+              />
             </div>
             <p
               v-show="errorMessage"
@@ -150,7 +157,7 @@
 
 <script setup lang="ts">
 import { doc, setDoc, database, storage, ref as storageRef, uploadBytes, getDownloadURL } from './../../firebase'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import AppButton from './../atoms/AppButton.vue'
 import AppInput from './../atoms/AppInput.vue'
 import { useStore } from './../../store/index'
@@ -172,11 +179,13 @@ const errorMessage = ref('')
 const file = ref<File | null>(null)
 
 const initialRecipeData = {
+  id: '',
   title: '',
   description: '',
   ingredients: [],
   authorName: '',
   authorPhotoUrl: '',
+  authorId: '',
   comments: [],
   cookingTime: 0,
   servings: 0,
@@ -187,6 +196,14 @@ const initialRecipeData = {
 }
 
 const recipe = ref<Recipe>({ ...initialRecipeData })
+
+// update recipe whenever user wants to edit it
+watch(
+  () => store.processedRecipe,
+  r => {
+    if (r !== undefined) recipe.value = r
+  }
+)
 
 const addNewIngredient = () => {
   recipe.value.ingredients.push({
@@ -208,18 +225,22 @@ const deleteIngredient = (index: number) => {
 }
 
 const createRecipe = async (): Promise<void> => {
-  const photoId = uid()
-  const imageRef = storageRef(storage, `images/${photoId}`)
-  if (file.value) {
+  if (!recipe.value.id) recipe.value.id = uid()
+  if (file.value !== null) {
+    const photoId = uid()
+    const imageRef = storageRef(storage, `images/${photoId}`)
     await uploadBytes(imageRef, file.value)
+    await getDownloadURL(storageRef(storage, `images/${photoId}`)).then(async url => {
+      recipe.value.image = url
+    })
   }
-  if (store.user.displayName) {
-    recipe.value.authorName = store.user.displayName
-  }
+  recipe.value.authorName = store.user.displayName as string
+  recipe.value.authorId = store.user.uid as string
   recipe.value.authorPhotoUrl = store.user.photoURL as string
-  await getDownloadURL(storageRef(storage, `images/${photoId}`)).then(async url => {
-    recipe.value.image = url
-    await setDoc(doc(database, 'Recipes', uid()), recipe.value)
+  await setDoc(doc(database, 'Recipes', recipe.value.id), recipe.value).then(() => {
+    store.setProcessedRecipe('', { ...initialRecipeData })
+    file.value = null
+    store.editingRecipe = false
   })
 }
 
@@ -240,6 +261,13 @@ const handleSubmitForm = async () => {
     file.value = null
     emit('toggleForm')
   })
+}
+
+const handleFormClose = (): void => {
+  store.setProcessedRecipe('', { ...initialRecipeData })
+  file.value = null
+  store.editingRecipe = false
+  emit('toggleForm')
 }
 </script>
 

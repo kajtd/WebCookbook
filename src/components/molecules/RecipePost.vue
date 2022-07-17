@@ -3,6 +3,7 @@
     class="relative bg-pinkLight h-48 border-2 border-black rounded-xl flex flex-col items-center justify-between"
   >
     <button
+      v-show="authorId === store.user.uid"
       class="w-7 h-7 bg-transparent border-none absolute right-1 top-1 text-xl"
       @click="editDropdownVisible = true"
     >
@@ -41,7 +42,7 @@ import { Icon } from '@iconify/vue'
 import AppButton from '../atoms/AppButton.vue'
 import AppDropdown from '../atoms/AppDropdown.vue'
 import { useStore } from './../../store'
-import { doc, updateDoc } from 'firebase/firestore'
+import { doc, updateDoc, deleteDoc } from 'firebase/firestore'
 import { database } from './../../firebase'
 
 const store = useStore()
@@ -51,6 +52,7 @@ const props = defineProps<{
   title: string
   authorName: string
   authorPhotoUrl: string
+  authorId: string
   image: string
   likes: string[]
 }>()
@@ -93,14 +95,17 @@ const dropdownItems = [
     label: 'Edit',
     icon: 'akar-icons:chat-edit',
     action: () => {
-      console.log('edit')
+      store.toggleCreateRecipeForm()
+      store.setProcessedRecipe(props.id)
+      store.editingRecipe = true
     }
   },
   {
     label: 'Delete',
     icon: 'akar-icons:trash-can',
-    action: () => {
-      console.log('delete')
+    additionalClass: 'bg-red-400 rounded-b-lg',
+    action: async () => {
+      await deleteDoc(doc(database, 'Recipes', props.id))
     }
   }
 ]
