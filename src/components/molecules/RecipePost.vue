@@ -2,14 +2,19 @@
   <article
     class="relative bg-pinkLight h-48 border-2 border-black rounded-xl flex flex-col items-center justify-between"
   >
-    <button class="w-7 h-7 bg-transparent border-none absolute right-1 top-1 text-xl">
+    <button
+      v-show="authorId === store.user.uid"
+      class="w-7 h-7 bg-transparent border-none absolute right-1 top-1 text-xl"
+      @click="editDropdownVisible = true"
+    >
       <Icon icon="bi:three-dots" color="black" />
     </button>
+    <AppDropdown :open.sync="editDropdownVisible" :items="dropdownItems" @close="closeDropdown" />
     <router-link :to="`/recipes/${id}`" class="w-full h-3/4">
       <div class="flex items-center justify-between pl-2 py-3 w-full h-full">
         <img :src="image" :alt="title" class="h-full rounded-xl object-cover min-w-[120px] w-full" />
         <div class="h-full w-full flex flex-col justify-center pl-5">
-          <p class="text-xl font-bold mt-10 mb-auto">{{ title }}</p>
+          <p class="text-xl font-bold mt-5 mb-auto">{{ title.length > 32 ? `${title.slice(0, 32)}...` : title }}</p>
           <p class="text-xs font-semibold text-gray-800 flex items-center">
             <img :src="authorPhotoUrl" alt="" class="w-6 h-6 rounded-full" />
             <span class="ml-1 self-end">{{ authorName }}</span>
@@ -35,8 +40,9 @@
 import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
 import AppButton from '../atoms/AppButton.vue'
+import AppDropdown from '../atoms/AppDropdown.vue'
 import { useStore } from './../../store'
-import { doc, updateDoc } from 'firebase/firestore'
+import { doc, updateDoc, deleteDoc } from 'firebase/firestore'
 import { database } from './../../firebase'
 
 const store = useStore()
@@ -46,11 +52,13 @@ const props = defineProps<{
   title: string
   authorName: string
   authorPhotoUrl: string
+  authorId: string
   image: string
   likes: string[]
 }>()
 
 const liked = ref(props.likes.includes(store.user.uid))
+const editDropdownVisible = ref(false)
 
 const likeRecipe = async (): Promise<void> => {
   if (props.likes.includes(store.user.uid)) return
@@ -80,5 +88,29 @@ const handleLikeButtonClick = (): void => {
     return
   }
   likeRecipe()
+}
+
+const dropdownItems = [
+  {
+    label: 'Edit',
+    icon: 'akar-icons:chat-edit',
+    action: () => {
+      store.toggleCreateRecipeForm()
+      store.setProcessedRecipe(props.id)
+      store.editingRecipe = true
+    }
+  },
+  {
+    label: 'Delete',
+    icon: 'akar-icons:trash-can',
+    additionalClass: 'bg-red-400 rounded-b-lg',
+    action: async () => {
+      await deleteDoc(doc(database, 'Recipes', props.id))
+    }
+  }
+]
+
+const closeDropdown = () => {
+  editDropdownVisible.value = false
 }
 </script>
