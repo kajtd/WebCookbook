@@ -105,6 +105,7 @@ const dropdownItems = [
     icon: 'akar-icons:trash-can',
     additionalClass: 'bg-red-400 rounded-b-lg',
     action: async () => {
+      store.recipes = store.recipes.filter(item => item.id !== props.id)
       await deleteDoc(doc(database, 'Recipes', props.id))
     }
   }

@@ -186,6 +186,7 @@ const initialRecipeData = {
   authorName: '',
   authorPhotoUrl: '',
   authorId: '',
+  createdAt: new Date(),
   comments: [],
   cookingTime: 0,
   servings: 0,
@@ -237,6 +238,7 @@ const createRecipe = async (): Promise<void> => {
   recipe.value.authorName = store.user.displayName as string
   recipe.value.authorId = store.user.uid as string
   recipe.value.authorPhotoUrl = store.user.photoURL as string
+  if (!store.editingRecipe) store.recipes.unshift(recipe.value)
   await setDoc(doc(database, 'Recipes', recipe.value.id), recipe.value).then(() => {
     store.setProcessedRecipe('', { ...initialRecipeData })
     file.value = null

@@ -6,6 +6,7 @@ export interface Recipe {
   authorName: string
   authorPhotoUrl: string
   authorId: string
+  createdAt: Date
   comments: string[]
   cookingTime?: number
   servings?: number
