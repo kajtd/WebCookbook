@@ -11,7 +11,7 @@
       :image="recipe.image"
       :likes="recipe.likes"
     />
-    <AppLoader class="mx-auto mt-3" v-show="store.loading" />
+    <AppLoader class="mx-auto mt-3 md:col-span-full" v-show="store.loading" />
   </section>
 </template>
 
