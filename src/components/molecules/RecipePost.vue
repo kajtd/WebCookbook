@@ -44,6 +44,7 @@ import AppDropdown from '../atoms/AppDropdown.vue'
 import { useStore } from './../../store'
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore'
 import { database } from './../../firebase'
+import { Recipe } from './../../types/Recipe'
 
 const store = useStore()
 
@@ -65,6 +66,8 @@ const likeRecipe = async (): Promise<void> => {
 
   const likes = [...props.likes, store.user.uid]
   const recipeDocRef = doc(database, 'Recipes', props.id)
+  const recipeIndex: number = store.recipes.findIndex((recipe: Recipe) => recipe.id === props.id)
+  store.recipes[recipeIndex].likes = likes
 
   await updateDoc(recipeDocRef, { likes }).then(() => {
     liked.value = true
@@ -76,6 +79,8 @@ const dislikeRecipe = async (): Promise<void> => {
 
   const likes = props.likes.filter((uid: string) => uid !== store.user.uid)
   const recipeDocRef = doc(database, 'Recipes', props.id)
+  const recipeIndex: number = store.recipes.findIndex((recipe: Recipe) => recipe.id === props.id)
+  store.recipes[recipeIndex].likes = likes
 
   await updateDoc(recipeDocRef, { likes }).then(() => {
     liked.value = false
@@ -105,6 +110,7 @@ const dropdownItems = [
     icon: 'akar-icons:trash-can',
     additionalClass: 'bg-red-400 rounded-b-lg',
     action: async () => {
+      store.recipes = store.recipes.filter(item => item.id !== props.id)
       await deleteDoc(doc(database, 'Recipes', props.id))
     }
   }
