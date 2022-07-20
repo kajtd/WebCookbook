@@ -17,7 +17,9 @@
 import { watch } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useStore } from './../../store'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const store = useStore()
 
 watch(
@@ -30,6 +32,15 @@ watch(
     } else {
       store.searchedRecipes = []
     }
+  }
+)
+
+// clear search bar when route changes
+watch(
+  () => route.fullPath,
+  () => {
+    store.searchQuery = ''
+    store.searchedRecipes = []
   }
 )
 </script>

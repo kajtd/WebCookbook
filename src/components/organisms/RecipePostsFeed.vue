@@ -1,6 +1,6 @@
 <template>
   <section
-    v-if="recipesToShow.length > 0"
+    v-if="recipesToShow.length > 0 || !store.searchQuery"
     class="w-full grid grid-cols-1 md:grid-cols-[320px_320px] gap-2 justify-end"
     ref="scrollComponent"
   >
