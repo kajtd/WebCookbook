@@ -1,6 +1,6 @@
 <template>
   <section
-    class="border-0 sm:border-4 border-black rounded-3xl bg-pinkLight p-4 sm:p-6 -mt-6 w-full max-w-5xl flex flex-col items-center gap-8 z-[-1]"
+    class="border-0 sm:border-4 border-black rounded-3xl bg-pinkLight p-4 sm:p-6 -mt-6 w-full max-w-5xl flex flex-col items-center gap-8 z-[2]"
   >
     <div class="text-center mt-12">
       <h2 class="text-3xl sm:text-5xl font-bold">Not sure what to eat? 👨‍🍳</h2>
