@@ -9,6 +9,8 @@ export type RootState = {
   editingRecipe: boolean
   processedRecipe: Recipe
   recipes: Recipe[]
+  searchedRecipes: Recipe[]
+  searchQuery: string
 }
 
 const userKey = Object.keys(window.localStorage).filter(it => it.startsWith('firebase:authUser'))[0]
@@ -21,7 +23,9 @@ export const useStore = defineStore('store', {
       processingRecipe: false,
       editingRecipe: false,
       processedRecipe: {},
-      recipes: [] as Recipe[]
+      recipes: [] as Recipe[],
+      searchedRecipes: [] as Recipe[],
+      searchQuery: ''
     } as RootState
   },
   getters: {},

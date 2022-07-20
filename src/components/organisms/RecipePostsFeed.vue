@@ -1,7 +1,11 @@
 <template>
-  <section class="w-full grid grid-cols-1 md:grid-cols-[320px_320px] gap-2 justify-end" ref="scrollComponent">
+  <section
+    v-if="recipesToShow.length > 0"
+    class="w-full grid grid-cols-1 md:grid-cols-[320px_320px] gap-2 justify-end"
+    ref="scrollComponent"
+  >
     <RecipePost
-      v-for="recipe in store.recipes"
+      v-for="recipe in recipesToShow"
       :key="recipe.id"
       :id="recipe.id"
       :title="recipe.title"
@@ -13,12 +17,15 @@
     />
     <AppLoader class="mx-auto mt-3 md:col-span-full" v-show="store.loading" />
   </section>
+  <section v-else class="w-full flex items-center justify-center">
+    <h3 class="text-3xl font-semibold">No recipes found 😕</h3>
+  </section>
 </template>
 
 <script setup lang="ts">
 import { database } from './../../firebase'
 import { getDocs, collection, query, orderBy, limit, startAfter, Query, DocumentData } from 'firebase/firestore'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref, computed } from 'vue'
 import { useStore } from './../../store'
 import RecipePost from './../molecules/RecipePost.vue'
 import { Recipe } from './../../types/Recipe'
@@ -30,6 +37,8 @@ const scrollComponent = ref<HTMLDivElement>()
 const postsLoaded = ref(false)
 const currentBatch = ref(0)
 const allBatches = ref<Number[]>([])
+
+const recipesToShow = computed(() => (store.searchQuery ? store.searchedRecipes : store.recipes))
 
 onMounted(async () => {
   const customQuery = query(collection(database, 'Recipes'), orderBy('createdAt', 'desc'), limit(12))
