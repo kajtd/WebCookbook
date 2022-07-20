@@ -77,6 +77,7 @@ const loadMoreRecipes = async (): Promise<void> => {
 }
 
 const handleScroll = async () => {
+  if (!scrollComponent.value) return
   let element = scrollComponent.value as HTMLDivElement
   const newBatch = allBatches.value.indexOf(currentBatch.value) === -1
   if (element.getBoundingClientRect().bottom < window.innerHeight && newBatch) {
