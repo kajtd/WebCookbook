@@ -13,6 +13,7 @@ export interface Recipe {
   calories?: number
   image: string
   likes: string[]
+  tagId: string
   preparation: string
 }
 

@@ -31,11 +31,7 @@ import AppButton from '../atoms/AppButton.vue'
 import { onSnapshot, collection } from '@firebase/firestore'
 import { database } from '../../firebase'
 import RecipeTag from '../atoms/RecipeTag.vue'
-
-interface Tag {
-  name: string
-  id: string
-}
+import Tag from '../../types/Tag'
 
 const calories = ref(0)
 const cookingTime = ref(0)

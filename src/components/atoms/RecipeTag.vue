@@ -14,7 +14,7 @@
 defineProps<{
   id: string
   name: string
-  activeTagId: string
+  activeTagId?: string
   type?: 'button' | 'submit' | 'reset'
 }>()
 </script>
