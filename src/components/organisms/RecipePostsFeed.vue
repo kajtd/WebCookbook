@@ -1,6 +1,6 @@
 <template>
   <section
-    v-if="recipesToShow.length > 0 || !store.searchQuery"
+    v-if="recipesVisible"
     class="w-full grid grid-cols-1 md:grid-cols-[320px_320px] gap-2 justify-end"
     ref="scrollComponent"
   >
@@ -14,8 +14,11 @@
       :authorId="recipe.authorId"
       :image="recipe.image"
       :likes="recipe.likes"
+      :visible="recipe.visible"
     />
-    <AppLoader class="mx-auto mt-3 md:col-span-full" v-show="store.loading" />
+  </section>
+  <section v-else-if="store.loading" class="w-full flex justify-center items-center">
+    <AppLoader class="mx-auto mt-3 md:col-span-full" />
   </section>
   <section v-else class="w-full flex items-center justify-center">
     <h3 class="text-3xl font-semibold">No recipes found 😕</h3>
@@ -39,6 +42,9 @@ const currentBatch = ref(0)
 const allBatches = ref<Number[]>([])
 
 const recipesToShow = computed(() => (store.searchQuery ? store.searchedRecipes : store.recipes))
+const recipesVisible = computed(
+  () => recipesToShow.value.length > 0 && recipesToShow.value.some(recipe => recipe.visible)
+)
 
 onMounted(async () => {
   const customQuery = query(collection(database, 'Recipes'), orderBy('createdAt', 'desc'), limit(12))

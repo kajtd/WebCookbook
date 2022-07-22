@@ -4,3 +4,10 @@ export const validateEmail = (email: string): boolean => {
 
   return emailRegex.test(email.toLowerCase())
 }
+
+export const formatCookingTime = (time: number): string => {
+  const hours: number = Math.floor(time / 60)
+  const minutes: number = time % 60
+
+  return `${hours}h ${minutes}min`
+}

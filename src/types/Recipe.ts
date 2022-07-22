@@ -8,13 +8,14 @@ export interface Recipe {
   authorId: string
   createdAt: Date
   comments: string[]
-  cookingTime?: number
-  servings?: number
-  calories?: number
+  cookingTime: number
+  servings: number
+  calories: number
   image: string
   likes: string[]
   tagId: string
   preparation: string
+  visible: boolean
 }
 
 export interface Ingredient {
