@@ -1,8 +1,8 @@
 <template>
   <div
     :class="[
-      'z-[1] w-full max-w-lg rounded-full border-2 border-black h-16 bg-white flex items-center justify-between pr-2 gap-2',
-      { '!max-w-5xl': !fullscreen }
+      'z-[1] w-full rounded-full border-2 border-black h-16 bg-white flex items-center justify-between pr-2 gap-2',
+      fullscreen ? 'max-w-5xl' : 'max-w-lg'
     ]"
   >
     <input
