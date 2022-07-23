@@ -42,7 +42,7 @@
                 <div class="flex flex-col">
                   <label for="cooking_time" class="font-semibold text-lg mb-1"> Cooking time </label>
                   <AppInput
-                    v-model="(recipe.cookingTime as number)"
+                    v-model="recipe.cookingTime"
                     id="cooking_time"
                     name="cooking_time"
                     class="w-[120px]"
@@ -101,7 +101,7 @@
                   <AppInput
                     v-model="ingredient.amount"
                     id="ingredient_amount"
-                    type="string"
+                    type="text"
                     placeholder="Amount"
                     class="w-16 md:w-auto"
                   />
@@ -138,7 +138,7 @@
                     :key="i"
                     :id="tag.id"
                     :name="tag.name"
-                    :activeTagId="activeTagId"
+                    :activeTagId="recipe.tagId"
                     @click="setActiveTagId(tag.id)"
                   >
                     {{ tag.name }}
@@ -203,8 +203,6 @@ const file = ref<File | null>(null)
 
 const tags = ref<Tag[]>([])
 
-const activeTagId = ref('')
-
 const initialRecipeData = {
   id: '',
   title: '',
@@ -215,13 +213,14 @@ const initialRecipeData = {
   authorId: '',
   createdAt: new Date(),
   comments: [],
-  cookingTime: 0,
+  cookingTime: '',
   servings: 0,
   calories: 0,
   image: '',
   likes: [],
   preparation: '',
-  tagId: ''
+  tagId: '',
+  visible: true
 }
 
 const recipe = ref<Recipe>({ ...initialRecipeData })
@@ -242,7 +241,6 @@ const addNewIngredient = () => {
 }
 
 const setActiveTagId = (id: string): void => {
-  activeTagId.value = id
   recipe.value.tagId = id
 }
 

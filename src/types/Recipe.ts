@@ -8,7 +8,7 @@ export interface Recipe {
   authorId: string
   createdAt: Date
   comments: string[]
-  cookingTime: number
+  cookingTime: string
   servings: number
   calories: number
   image: string
