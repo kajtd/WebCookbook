@@ -1,7 +1,7 @@
 <template>
   <section
     v-if="recipesVisible"
-    class="w-full grid grid-cols-1 md:grid-cols-[320px_320px] gap-2 justify-end"
+    class="w-full grid grid-cols-1 lg:grid-cols-[320px_320px] gap-2 justify-end"
     ref="scrollComponent"
   >
     <RecipePost
@@ -20,7 +20,7 @@
   <section v-else-if="store.loading" class="w-full flex justify-center items-center">
     <AppLoader class="mx-auto mt-3 md:col-span-full" />
   </section>
-  <section v-else class="w-full flex items-center justify-center">
+  <section v-else class="w-full flex items-center justify-center min-h-[300px]">
     <h3 class="text-3xl font-semibold">No recipes found 😕</h3>
   </section>
 </template>
