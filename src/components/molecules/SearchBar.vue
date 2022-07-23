@@ -1,6 +1,9 @@
 <template>
   <div
-    class="w-full max-w-lg rounded-full border-2 border-black h-16 bg-white flex items-center justify-between pr-2 gap-2"
+    :class="[
+      'z-[1] w-full max-w-lg rounded-full border-2 border-black h-16 bg-white flex items-center justify-between pr-2 gap-2',
+      { '!max-w-5xl': !fullscreen }
+    ]"
   >
     <input
       v-model="store.searchQuery"
@@ -18,6 +21,10 @@ import { watch } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useStore } from './../../store'
 import { useRoute } from 'vue-router'
+
+defineProps<{
+  fullscreen: boolean
+}>()
 
 const route = useRoute()
 const store = useStore()
