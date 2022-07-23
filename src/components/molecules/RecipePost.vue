@@ -1,5 +1,6 @@
 <template>
   <article
+    v-show="visible"
     class="relative bg-pinkLight h-48 border-2 border-black rounded-xl flex flex-col items-center justify-between"
   >
     <button
@@ -56,6 +57,7 @@ const props = defineProps<{
   authorId: string
   image: string
   likes: string[]
+  visible: boolean
 }>()
 
 const liked = ref(props.likes.includes(store.user.uid))

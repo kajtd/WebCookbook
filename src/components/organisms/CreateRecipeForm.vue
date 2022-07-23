@@ -3,7 +3,7 @@
     <div v-show="formVisible" class="fixed top-0 left-0 right-0 bottom-0 z-50 w-full overflow-y-scroll bg-white">
       <article class="flex flex-col justify-between items-center relative">
         <header class="w-full bg-blueLight border-b-4 border-black">
-          <div class="max-w-5xl flex items-center justify-between py-7 px-4 md:px-8 mx-auto">
+          <div class="max-w-5xl flex items-center justify-between py-6 px-4 md:px-8 mx-auto">
             <div class="flex flex-row-reverse md:flex-row items-center justify-between w-full md:w-auto gap-5">
               <button type="button" class="cursor-pointer" @click="handleFormClose">
                 <Icon icon="eva:close-fill" class="text-4xl" />
@@ -42,7 +42,7 @@
                 <div class="flex flex-col">
                   <label for="cooking_time" class="font-semibold text-lg mb-1"> Cooking time </label>
                   <AppInput
-                    v-model="(recipe.cookingTime as number)"
+                    v-model="recipe.cookingTime"
                     id="cooking_time"
                     name="cooking_time"
                     class="w-[120px]"
@@ -75,7 +75,7 @@
             </div>
             <div class="w-full flex flex-col row-start-2 col-start-1">
               <div class="flex items-center justify-between">
-                <span class="text-2xl font-semibold">
+                <span class="text-xl font-semibold">
                   Ingredients
                   <span class="text-red-500 font-bold relative bottom-1 right-1">*</span>
                 </span>
@@ -101,7 +101,7 @@
                   <AppInput
                     v-model="ingredient.amount"
                     id="ingredient_amount"
-                    type="string"
+                    type="text"
                     placeholder="Amount"
                     class="w-16 md:w-auto"
                   />
@@ -111,21 +111,40 @@
                 </div>
               </div>
             </div>
-            <div class="flex flex-col h-full row-start-1 row-end-3">
-              <label for="preparation" class="font-semibold text-lg mb-1">
-                Preparation
-                <span class="text-red-500 font-bold relative bottom-1 right-1">*</span>
-              </label>
-              <AppTextarea
-                v-model="recipe.preparation"
-                id="preparation"
-                name="preparation"
-                type="text"
-                placeholder="Describe preparation"
-                required
-                :rows="10"
-                class="w-full h-full mb-0"
-              />
+            <div class="flex flex-col h-full justify-between row-start-1 row-end-3">
+              <div class="h-full">
+                <label for="preparation" class="font-semibold text-xl">
+                  Preparation
+                  <span class="text-red-500 font-bold relative bottom-1 right-1">*</span>
+                </label>
+                <AppTextarea
+                  v-model="recipe.preparation"
+                  id="preparation"
+                  name="preparation"
+                  type="text"
+                  placeholder="Describe preparation"
+                  required
+                  :rows="10"
+                  class="w-full h-full mt-1"
+                />
+              </div>
+              <div class="md:mt-12">
+                <h4 class="font-semibold text-xl mb-2">
+                  Choose best matching tag: <span class="text-red-500 font-bold relative bottom-1 right-1">*</span>
+                </h4>
+                <div class="flex flex-wrap gap-2">
+                  <RecipeTag
+                    v-for="(tag, i) in tags"
+                    :key="i"
+                    :id="tag.id"
+                    :name="tag.name"
+                    :activeTagId="recipe.tagId"
+                    @click="setActiveTagId(tag.id)"
+                  >
+                    {{ tag.name }}
+                  </RecipeTag>
+                </div>
+              </div>
             </div>
             <div class="flex flex-col mt-5">
               <label for="description" class="font-semibold text-lg mb-1">
@@ -156,8 +175,10 @@
 </template>
 
 <script setup lang="ts">
-import { doc, setDoc, database, storage, ref as storageRef, uploadBytes, getDownloadURL } from './../../firebase'
-import { ref, watch } from 'vue'
+import { database, storage } from './../../firebase'
+import { onSnapshot, collection, doc, setDoc } from '@firebase/firestore'
+import { ref as storageRef, uploadBytes, getDownloadURL } from '@firebase/storage'
+import { ref, watch, onMounted } from 'vue'
 import AppButton from './../atoms/AppButton.vue'
 import AppInput from './../atoms/AppInput.vue'
 import { useStore } from './../../store/index'
@@ -165,6 +186,8 @@ import { Recipe } from './../../types/Recipe'
 import AppTextarea from '../atoms/AppTextarea.vue'
 import { Icon } from '@iconify/vue'
 import { uid } from 'uid'
+import Tag from './../../types/Tag'
+import RecipeTag from './../atoms/RecipeTag.vue'
 
 defineProps<{
   formVisible: boolean
@@ -178,6 +201,8 @@ const errorMessage = ref('')
 
 const file = ref<File | null>(null)
 
+const tags = ref<Tag[]>([])
+
 const initialRecipeData = {
   id: '',
   title: '',
@@ -188,12 +213,14 @@ const initialRecipeData = {
   authorId: '',
   createdAt: new Date(),
   comments: [],
-  cookingTime: 0,
+  cookingTime: '',
   servings: 0,
   calories: 0,
   image: '',
   likes: [],
-  preparation: ''
+  preparation: '',
+  tagId: '',
+  visible: true
 }
 
 const recipe = ref<Recipe>({ ...initialRecipeData })
@@ -211,6 +238,10 @@ const addNewIngredient = () => {
     name: '',
     amount: 0
   })
+}
+
+const setActiveTagId = (id: string): void => {
+  recipe.value.tagId = id
 }
 
 const updateImage = (e: Event) => {
@@ -251,7 +282,8 @@ const handleSubmitForm = async () => {
     !recipe.value.title ||
     !recipe.value.description ||
     recipe.value.ingredients.length === 0 ||
-    !recipe.value.preparation
+    !recipe.value.preparation ||
+    !recipe.value.tagId
   ) {
     errorMessage.value = 'Please fill in all necessary fields'
     return
@@ -271,6 +303,13 @@ const handleFormClose = (): void => {
   store.editingRecipe = false
   emit('toggleForm')
 }
+
+onMounted(async () => {
+  await onSnapshot(collection(database, 'Tags'), snapshot => {
+    const posts: Tag[] = snapshot.docs.map(doc => doc.data() as Tag)
+    tags.value = posts
+  })
+})
 </script>
 
 <style scoped>

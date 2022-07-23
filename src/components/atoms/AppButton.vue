@@ -1,8 +1,12 @@
 <template>
-  <router-link v-if="href" :class="['btn-primary', additionalClass]" :to="href">
+  <router-link
+    v-if="href"
+    :class="['btn-primary', additionalClass, { '!bg-blue-300 !text-black': secondary }]"
+    :to="href"
+  >
     <slot />
   </router-link>
-  <button v-else :class="['btn-primary', additionalClass]" :type="type">
+  <button v-else :class="['btn-primary', additionalClass, { '!bg-blue-300 !text-black': secondary }]" :type="type">
     <slot />
   </button>
 </template>
@@ -10,7 +14,7 @@
 <script setup lang="ts">
 defineProps<{
   additionalClass?: string
-  size?: string
+  secondary?: boolean
   type?: 'button' | 'submit' | 'reset'
   href?: string
 }>()
