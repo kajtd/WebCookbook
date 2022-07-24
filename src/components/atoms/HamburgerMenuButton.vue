@@ -1,5 +1,5 @@
 <template>
-  <div class="z-40 md:hidden inline-flex">
+  <div class="z-40 md:hidden inline-flex border-2 border-black rounded-full">
     <input
       type="checkbox"
       id="nav-checkbox"
