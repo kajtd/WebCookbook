@@ -16,6 +16,10 @@ import {
 
 import { getFirestore, doc, collection, onSnapshot, setDoc } from 'firebase/firestore'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { useStore } from './store'
+
+const store = useStore()
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -42,7 +46,7 @@ const storage = getStorage()
 // save the user's profile to the local storage after sign in
 onAuthStateChanged(auth, user => {
   if (user) {
-    setPersistence(auth, browserLocalPersistence)
+    store.user = user
   }
 })
 
