@@ -134,9 +134,9 @@ const clearForm = (): void => {
 const signInWithGoogle = (): void => {
   store.loading = true
   signInWithPopup(auth, provider)
-    .then(userCredential => {
+    .then(() => {
       store.loading = false
-      store.user = userCredential.user
+      window.location.reload()
     })
     .catch(error => {
       store.loading = false
@@ -148,7 +148,7 @@ const signInWithGoogle = (): void => {
 const createNewUser = async (): Promise<void> => {
   store.loading = true
   await createUserWithEmailAndPassword(auth, form.value.email, form.value.password as string)
-    .then(res => {
+    .then(() => {
       if (auth.currentUser) {
         updateProfile(auth.currentUser, {
           displayName: form.value.login,
@@ -156,8 +156,8 @@ const createNewUser = async (): Promise<void> => {
         })
       }
       clearForm()
-      if (auth.currentUser) store.user = auth.currentUser
       store.loading = false
+      window.location.reload()
     })
     .catch(error => {
       console.log(error)
@@ -169,10 +169,10 @@ const createNewUser = async (): Promise<void> => {
 const signInWithPassword = (): void => {
   store.loading = true
   signInWithEmailAndPassword(auth, form.value.email, form.value.password as string)
-    .then(userCredential => {
+    .then(() => {
       clearForm()
       store.loading = false
-      store.user = userCredential.user
+      window.location.reload()
     })
     .catch(error => {
       console.log(error)
