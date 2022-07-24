@@ -16,7 +16,7 @@
           >
             Login
           </AppButton>
-          <div v-else class="relative w-full">
+          <div v-else class="relative w-full flex items-center justify-center">
             <button @click="logoutDropdownVisible = true">
               <img
                 v-if="store.user.photoURL"
