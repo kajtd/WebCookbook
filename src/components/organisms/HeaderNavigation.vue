@@ -55,11 +55,27 @@
           >
             Login
           </AppButton>
-          <img
-            v-else-if="store.user.photoURL"
-            :src="store.user.photoURL"
-            class="rounded-full h-12 w-12 border-2 border-black mt-auto"
-          />
+          <div v-else class="relative w-full mt-auto">
+            <button @click="logoutDropdownVisible = true">
+              <img
+                v-if="store.user.photoURL"
+                :src="store.user.photoURL"
+                class="rounded-full h-10 w-10 border-2 border-black"
+              />
+            </button>
+            <AppDropdown
+              additionalClass="left-4 bottom-4 right-auto top-auto"
+              :open.sync="logoutDropdownVisible"
+              @close="closeDropdown"
+            >
+              <div class="gap-2 w-full px-8 py-4">
+                <p class="font-semibold text-base pb-2 border-b-2 border-black mb-5 text-center">
+                  {{ store.user.displayName }}
+                </p>
+                <AppButton @click="logout">Logout</AppButton>
+              </div>
+            </AppDropdown>
+          </div>
         </nav>
       </transition>
     </div>

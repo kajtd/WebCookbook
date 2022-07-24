@@ -1,5 +1,5 @@
 <template>
-  <div ref="container" class="absolute right-2 top-2 bg-white rounded-lg shadow-lg" tabindex="0">
+  <div ref="container" :class="['absolute right-2 top-2 bg-white rounded-lg shadow-lg', additionalClass]" tabindex="0">
     <div
       v-if="open"
       class="text-base"
@@ -39,6 +39,7 @@ interface Item {
 defineProps<{
   open: boolean
   items?: Item[]
+  additionalClass?: string
 }>()
 const emit = defineEmits(['close'])
 
