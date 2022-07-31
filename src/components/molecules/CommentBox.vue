@@ -3,6 +3,7 @@
     <AppTextarea
       v-model="comment.text"
       id="comment-box"
+      required
       placeholder="Enter comment!"
       class="w-full sm:!text-xl !border-2"
       :rows="4"
@@ -20,22 +21,33 @@ import { useStore } from '../../store'
 import { collection, doc, setDoc } from '@firebase/firestore'
 import { database } from './../../firebase'
 import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
 
 const route = useRoute()
 
 const store = useStore()
 
-const comment = ref<Comment>({
+const { user } = storeToRefs(store)
+
+const initialCommentData = {
   text: '',
   blogId: route.params.blogid as string,
-  authorName: store.user.displayName as string,
-  authorPhotoUrl: store.user.photoURL as string,
+  authorName: '',
+  authorPhotoUrl: '',
   createdAt: new Date()
-})
+}
+
+const comment = ref<Comment>({ ...initialCommentData })
 
 const postComment = async (): Promise<void> => {
-  await setDoc(doc(collection(database, 'Comments')), comment.value).then(() => {
-    comment.value.text = ''
-  })
+  try {
+    comment.value.authorName = user.value.displayName as string
+    comment.value.authorPhotoUrl = user.value.photoURL as string
+    comment.value.createdAt = new Date()
+    await setDoc(doc(collection(database, 'Comments')), comment.value)
+    comment.value = { ...initialCommentData }
+  } catch (error) {
+    console.log(error)
+  }
 }
 </script>
