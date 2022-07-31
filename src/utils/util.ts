@@ -16,3 +16,7 @@ export const convertTimeToMinutes = (time: string): number => {
   const [hours, minutes] = time.split(':').map(Number)
   return hours * 60 + minutes
 }
+
+export const formatLikesTitle = (likes: number): string => {
+  return likes === 1 ? 'like' : 'likes'
+}
