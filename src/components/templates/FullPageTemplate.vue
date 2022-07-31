@@ -4,6 +4,7 @@
     <slot />
     <AppFooter @toggle-login-popup="toggleLoginPopup" />
     <AppButton
+      v-if="store.user.uid"
       additionalClass="!rounded-full bottom-4 right-4 fixed h-16 w-16 !p-0 !shadow-xl"
       @click="store.toggleCreateRecipeForm"
     >
@@ -12,7 +13,11 @@
     <AppPopup :popup-visible="loginPopupVisible" @toggle-popup="toggleLoginPopup">
       <LoginForm />
     </AppPopup>
-    <CreateRecipeForm :form-visible="store.processingRecipe" @toggle-form="store.toggleCreateRecipeForm" />
+    <CreateRecipeForm
+      v-if="store.user.uid"
+      :form-visible="store.processingRecipe"
+      @toggle-form="store.toggleCreateRecipeForm"
+    />
   </div>
 </template>
 

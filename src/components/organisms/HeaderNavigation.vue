@@ -10,12 +10,7 @@
           <li v-for="link in links" :key="link.name">
             <HeaderNavigationLink :link="link" />
           </li>
-          <AppButton
-            v-if="Object.keys(store.user).length === 0 && store.user.constructor === Object"
-            @click="$emit('toggleLoginPopup')"
-          >
-            Login
-          </AppButton>
+          <AppButton v-if="!store.user.uid" @click="$emit('toggleLoginPopup')"> Login </AppButton>
           <div v-else class="relative w-full flex items-center justify-center">
             <button @click="logoutDropdownVisible = true">
               <img
