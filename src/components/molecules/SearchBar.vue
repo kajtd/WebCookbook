@@ -23,7 +23,7 @@ import { useStore } from './../../store'
 import { useRoute } from 'vue-router'
 
 defineProps<{
-  fullscreen: boolean
+  fullscreen?: boolean
 }>()
 
 const route = useRoute()
