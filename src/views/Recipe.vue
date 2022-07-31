@@ -2,7 +2,7 @@
   <FullPageTemplate>
     <main class="mt-[15vh] px-4">
       <article class="mx-auto w-full max-w-[720px] flex flex-col justify-center items-center">
-        <header class="w-full !max-w-none mb-16">
+        <header class="w-full !max-w-none mb-12 flex flex-col">
           <div class="w-full mx-auto mb-12">
             <h2 class="font-semibold text-slate-900 text-3xl sm:text-5xl">
               {{ recipe.title }}
@@ -12,6 +12,14 @@
             </h3>
           </div>
           <img :src="recipe.image" :alt="recipe.title" class="rounded-lg object-contain w-full" />
+          <ul
+            class="mt-5 flex flex-wrap gap-3 items-center justify-between w-full font-semibold text-xl border-4 border-black px-4 py-6 rounded-lg bg-orangeLight"
+          >
+            <li>{{ recipe?.cookingTime }} cook</li>
+            <li>{{ recipe?.servings }} servings</li>
+            <li>{{ recipe?.calories }} calories</li>
+            <li>{{ `${recipe?.likes?.length} ${formatLikesTitle(recipe?.likes?.length)}` }}</li>
+          </ul>
         </header>
         <section class="w-full">
           <h3 class="my-2 sm:my-5 text-black text-2xl sm:text-3xl font-semibold">Ingredients and preparation</h3>
@@ -51,6 +59,7 @@ import { database } from './../firebase'
 import { Recipe } from './../types/Recipe'
 import { Icon } from '@iconify/vue'
 import CommentsSection from '../components/organisms/CommentsSection.vue'
+import { formatLikesTitle } from './../utils/util'
 
 const route = useRoute()
 const blogId = ref('')

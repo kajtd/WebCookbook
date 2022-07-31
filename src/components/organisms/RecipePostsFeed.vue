@@ -20,7 +20,7 @@
   <section v-else-if="store.loading" class="w-full flex justify-center items-center">
     <AppLoader class="mx-auto mt-3 md:col-span-full" />
   </section>
-  <section v-else class="w-full flex items-center justify-center min-h-[300px]">
+  <section v-else class="w-full flex items-start justify-center min-h-[300px] mt-8">
     <h3 class="text-3xl font-semibold">No recipes found 😕</h3>
   </section>
 </template>
