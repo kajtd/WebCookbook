@@ -9,8 +9,7 @@
         </ul>
         <div v-if="!store.user.uid" class="flex flex-col sm:flex-row items-center">
           <span class="text-xl sm:text-3xl font-semibold mb-4 sm:mr-8 sm:mb-0">Not logged in yet? </span>
-          <AppButton additionalClass="!hidden md:!flex" @click="$emit('toggleLoginPopup')">Login</AppButton>
-          <AppButton additionalClass="md:!hidden flex" href="/login">Login</AppButton>
+          <AppButton @click="$emit('toggleLoginPopup')">Login</AppButton>
         </div>
         <span v-else class="text-xl sm:text-3xl font-semibold mr-5 text-center sm:text-left">
           Thanks for using our app 🧡
