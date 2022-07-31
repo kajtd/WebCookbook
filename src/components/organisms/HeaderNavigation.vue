@@ -51,7 +51,12 @@
           <AppButton
             v-if="Object.keys(store.user).length === 0 && store.user.constructor === Object"
             additionalClass="mt-auto self-start text-xl"
-            @click="$emit('toggleLoginPopup')"
+            @click="
+              () => {
+                toggleMobileNav()
+                $emit('toggleLoginPopup')
+              }
+            "
           >
             Login
           </AppButton>
