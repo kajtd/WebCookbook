@@ -1,6 +1,6 @@
 <template>
   <transition name="create-recipe-form">
-    <div v-show="formVisible" class="fixed top-0 left-0 right-0 bottom-0 z-50 w-full overflow-y-scroll bg-white">
+    <div v-show="formVisible" class="fixed top-0 left-0 right-0 bottom-0 z-50 w-full bg-white">
       <article class="flex flex-col justify-between items-center relative">
         <header class="w-full bg-blueLight border-b-4 border-black">
           <div class="max-w-5xl flex items-center justify-between py-6 px-4 md:px-8 mx-auto">
@@ -17,6 +17,7 @@
           <form
             class="w-full flex flex-col mt-12 md:mt-6 md:grid md:grid-cols-2 md:grid-rows-2 gap-4"
             action=""
+            ref="form"
             id="create_form"
             @submit.prevent="handleSubmitForm"
           >
@@ -52,7 +53,7 @@
                 <div class="flex flex-col">
                   <label for="servings" class="font-semibold text-lg mb-1">Servings</label>
                   <AppInput
-                    v-model="(recipe.servings as number)"
+                    v-model="recipe.servings"
                     id="servings"
                     name="servings"
                     class="w-[120px]"
@@ -63,7 +64,7 @@
                 <div class="flex flex-col">
                   <label for="calories" class="font-semibold text-lg mb-1">Calories</label>
                   <AppInput
-                    v-model="(recipe.calories as number)"
+                    v-model="recipe.calories"
                     id="calories"
                     name="calories"
                     class="w-[120px]"
@@ -155,6 +156,7 @@
                 id="image"
                 name="image"
                 type="file"
+                ref="file"
                 class="mb-3"
                 :required="!store.editingRecipe"
                 @change="updateImage"
@@ -196,13 +198,10 @@ defineProps<{
 const emit = defineEmits(['toggleForm'])
 
 const store = useStore()
-
 const errorMessage = ref('')
-
-const file = ref<File | null>(null)
-
+const file = ref()
 const tags = ref<Tag[]>([])
-
+const form = ref<HTMLFormElement>()
 const initialRecipeData = {
   id: '',
   title: '',
@@ -272,11 +271,10 @@ const createRecipe = async (): Promise<void> => {
   if (!store.editingRecipe) store.recipes.unshift(recipe.value)
   await setDoc(doc(database, 'Recipes', recipe.value.id), recipe.value).then(() => {
     store.setProcessedRecipe('', { ...initialRecipeData })
-    file.value = null
     store.editingRecipe = false
+    form.value?.reset()
   })
 }
-
 const handleSubmitForm = async () => {
   if (
     !recipe.value.title ||
@@ -292,14 +290,12 @@ const handleSubmitForm = async () => {
     errorMessage.value = ''
     recipe.value = initialRecipeData
     recipe.value.ingredients = []
-    file.value = null
     emit('toggleForm')
   })
 }
 
 const handleFormClose = (): void => {
   store.setProcessedRecipe('', { ...initialRecipeData })
-  file.value = null
   store.editingRecipe = false
   emit('toggleForm')
 }
