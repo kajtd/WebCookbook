@@ -8,7 +8,7 @@
       :checked="checked"
     />
     <label class="hamburger block relative w-[32px] h-[32px] z-50 cursor-pointer" for="nav-checkbox">
-      <button class="lines block cursor-pointer">
+      <button aria-label="hamburger" class="lines block cursor-pointer">
         <div class="line-wrapper absolute left-[7px] top-[15px] top">
           <div class="line h-[2px] w-[16px] rounded-[3px] top"></div>
         </div>

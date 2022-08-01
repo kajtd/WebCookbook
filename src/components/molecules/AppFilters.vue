@@ -1,6 +1,7 @@
 <template>
   <button
     class="md:hidden fixed top-1/2 left-0 -translate-y-1/2 bg-orangeLight p-4 rounded-r-md shadow-xl text-black border-2 border-black text-xl z-[2]"
+    aria-label="filters"
     @click="toggleFiltersSidebar"
   >
     <Icon icon="bi:filter-square" />
@@ -19,7 +20,7 @@
       <h3 class="text-3xl font-semibold">Recipes 🍳</h3>
       <label for="calories" class="font-semibold text-lg">Max calories - {{ calories }}</label>
       <input v-model.number="calories" type="range" name="Calories" min="0" max="3000" id="calories" class="slider" />
-      <label for="calories" class="font-semibold text-lg">
+      <label for="cooking_time" class="font-semibold text-lg">
         Max cooking time - {{ formatCookingTime(cookingTime) }}
       </label>
       <input
