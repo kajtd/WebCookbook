@@ -8,7 +8,7 @@
       <nav class="hidden md:flex items-center justify-start">
         <ul class="flex items-center gap-6">
           <li v-for="link in links" :key="link.name">
-            <HeaderNavigationLink :link="link" />
+            <AppNavigationLink :link="link" />
           </li>
           <li>
             <AppButton v-if="!store.user.uid" @click="$emit('toggleLoginPopup')"> Login </AppButton>
@@ -20,14 +20,14 @@
                   class="rounded-full h-10 w-10 border-2 border-black"
                 />
               </button>
-              <AppDropdown :open.sync="logoutDropdownVisible" @close="closeDropdown">
+              <AppDropdownMenu :open.sync="logoutDropdownVisible" @close="closeDropdown">
                 <div class="gap-2 w-full px-8 py-4">
                   <p class="font-semibold text-base pb-2 border-b-2 border-black mb-5 text-center">
                     {{ store.user.displayName }}
                   </p>
                   <AppButton @click="logout">Logout</AppButton>
                 </div>
-              </AppDropdown>
+              </AppDropdownMenu>
             </div>
           </li>
         </ul>
@@ -41,7 +41,7 @@
               class="text-3xl py-6 font-semibold transition duration-300 cursor-pointer text-gray-900"
             >
               <button @click="toggleMobileNav">
-                <HeaderNavigationLink :link="link" />
+                <AppNavigationLink :link="link" />
               </button>
             </li>
           </ul>
@@ -65,7 +65,7 @@
                 class="rounded-full h-10 w-10 border-2 border-black"
               />
             </button>
-            <AppDropdown
+            <AppDropdownMenu
               additionalClass="left-4 bottom-4 right-auto top-auto"
               :open.sync="logoutDropdownVisible"
               @close="closeDropdown"
@@ -76,7 +76,7 @@
                 </p>
                 <AppButton @click="logout">Logout</AppButton>
               </div>
-            </AppDropdown>
+            </AppDropdownMenu>
           </div>
         </nav>
       </transition>
@@ -87,10 +87,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import AppButton from '../atoms/AppButton.vue'
-import HeaderNavigationLink from '../atoms/HeaderNavigationLink.vue'
+import AppNavigationLink from '../atoms/AppNavigationLink.vue'
 import HamburgerMenuButton from '../atoms/HamburgerMenuButton.vue'
 import AppLogo from '../atoms/AppLogo.vue'
-import AppDropdown from '../atoms/AppDropdown.vue'
+import AppDropdownMenu from '../atoms/AppDropdownMenu.vue'
 import { useStore } from './../../store/index'
 import Link from './../../types/Link'
 import { signOut } from 'firebase/auth'

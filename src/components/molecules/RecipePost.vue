@@ -10,7 +10,7 @@
     >
       <Icon icon="bi:three-dots" color="black" />
     </button>
-    <AppDropdown :open.sync="editDropdownVisible" :items="dropdownItems" @close="closeDropdown" />
+    <AppDropdownMenu :open.sync="editDropdownVisible" :items="dropdownItems" @close="closeDropdown" />
     <router-link :to="`/recipes/${id}`" class="w-full h-3/4">
       <div class="flex items-center justify-between pl-2 py-3 w-full h-full">
         <img :src="image" :alt="title" class="h-full rounded-xl object-cover min-w-[120px] w-full" />
@@ -45,7 +45,7 @@
 import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
 import AppButton from '../atoms/AppButton.vue'
-import AppDropdown from '../atoms/AppDropdown.vue'
+import AppDropdownMenu from '../atoms/AppDropdownMenu.vue'
 import { useStore } from './../../store'
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore'
 import { database } from './../../firebase'

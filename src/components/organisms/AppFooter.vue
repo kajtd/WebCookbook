@@ -4,7 +4,7 @@
       <div class="flex flex-col sm:flex-row items-center justify-between">
         <ul class="flex flex-col mb-10 gap-5 sm:mb-0">
           <li v-for="link in links" :key="link.name">
-            <HeaderNavigationLink :link="link" />
+            <AppNavigationLink :link="link" />
           </li>
         </ul>
         <div v-if="!store.user.uid" class="flex flex-col sm:flex-row items-center">
@@ -16,7 +16,7 @@
         </span>
       </div>
       <span class="block text-sm text-black font-semibold text-center mt-8 pt-8 border-t border-gray-500">
-        © 2022 Web-cookbook 🍒. All Rights Reserved.
+        © {{ currentYear }} WebCookbook 🍒. All Rights Reserved.
       </span>
     </div>
   </footer>
@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import Link from './../../types/Link'
-import HeaderNavigationLink from './../atoms/HeaderNavigationLink.vue'
+import AppNavigationLink from './../atoms/AppNavigationLink.vue'
 import AppButton from '../atoms/AppButton.vue'
 import { useStore } from '../../store'
 
@@ -47,4 +47,6 @@ const links = ref<Link[]>([
     url: '/about'
   }
 ])
+
+const currentYear = ref<number>(new Date().getFullYear())
 </script>
