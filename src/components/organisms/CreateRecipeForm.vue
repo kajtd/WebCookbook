@@ -106,7 +106,7 @@
                     placeholder="Amount"
                     class="w-16 md:w-auto"
                   />
-                  <AppButton additionalClass="w-7 h-7 !px-1 mb-3" @click="deleteIngredient">
+                  <AppButton additionalClass="w-7 h-7 !px-1 mb-3" @click="deleteIngredient(index)">
                     <Icon icon="akar-icons:trash-can" />
                   </AppButton>
                 </div>

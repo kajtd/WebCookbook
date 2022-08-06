@@ -26,10 +26,14 @@
     <footer class="w-full h-1/4 flex items-center justify-between px-2 py-1 border-t-2 border-black">
       <p class="font-bold text-sm ml-1">{{ likes.length }} likes</p>
       <div class="ml-auto flex gap-1">
-        <AppButton additionalClass="w-7 h-7 !px-1 !bg-blue-300" :href="`/recipes/${id}#comments`">
+        <AppButton
+          aria-label="comment recipe"
+          additionalClass="w-7 h-7 !px-1 !bg-blue-300"
+          :href="`/recipes/${id}#comments`"
+        >
           <Icon icon="akar-icons:comment" color="black" />
         </AppButton>
-        <AppButton additionalClass="w-7 h-7 !px-1" @click="handleLikeButtonClick">
+        <AppButton aria-label="like button" additionalClass="w-7 h-7 !px-1" @click="handleLikeButtonClick">
           <Icon :icon="liked ? 'ant-design:heart-filled' : 'ant-design:heart-outlined'" />
         </AppButton>
       </div>

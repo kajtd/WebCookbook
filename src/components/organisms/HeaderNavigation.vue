@@ -10,24 +10,26 @@
           <li v-for="link in links" :key="link.name">
             <HeaderNavigationLink :link="link" />
           </li>
-          <AppButton v-if="!store.user.uid" @click="$emit('toggleLoginPopup')"> Login </AppButton>
-          <div v-else class="relative w-full flex items-center justify-center">
-            <button @click="logoutDropdownVisible = true">
-              <img
-                v-if="store.user.photoURL"
-                :src="store.user.photoURL"
-                class="rounded-full h-10 w-10 border-2 border-black"
-              />
-            </button>
-            <AppDropdown :open.sync="logoutDropdownVisible" @close="closeDropdown">
-              <div class="gap-2 w-full px-8 py-4">
-                <p class="font-semibold text-base pb-2 border-b-2 border-black mb-5 text-center">
-                  {{ store.user.displayName }}
-                </p>
-                <AppButton @click="logout">Logout</AppButton>
-              </div>
-            </AppDropdown>
-          </div>
+          <li>
+            <AppButton v-if="!store.user.uid" @click="$emit('toggleLoginPopup')"> Login </AppButton>
+            <div v-else class="relative w-full flex items-center justify-center">
+              <button @click="logoutDropdownVisible = true">
+                <img
+                  v-if="store.user.photoURL"
+                  :src="store.user.photoURL"
+                  class="rounded-full h-10 w-10 border-2 border-black"
+                />
+              </button>
+              <AppDropdown :open.sync="logoutDropdownVisible" @close="closeDropdown">
+                <div class="gap-2 w-full px-8 py-4">
+                  <p class="font-semibold text-base pb-2 border-b-2 border-black mb-5 text-center">
+                    {{ store.user.displayName }}
+                  </p>
+                  <AppButton @click="logout">Logout</AppButton>
+                </div>
+              </AppDropdown>
+            </div>
+          </li>
         </ul>
       </nav>
       <transition name="mobile-nav">
