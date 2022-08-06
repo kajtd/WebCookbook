@@ -9,7 +9,6 @@ export type RootState = {
   editingRecipe: boolean
   processedRecipe: Recipe
   recipes: Recipe[]
-  searchedRecipes: Recipe[]
   searchQuery: string
 }
 
@@ -22,7 +21,6 @@ export const useStore = defineStore('store', {
       editingRecipe: false,
       processedRecipe: {},
       recipes: [] as Recipe[],
-      searchedRecipes: [] as Recipe[],
       searchQuery: ''
     } as RootState
   },

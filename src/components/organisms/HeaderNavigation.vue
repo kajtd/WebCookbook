@@ -122,11 +122,14 @@ const closeDropdown = (): void => {
   logoutDropdownVisible.value = false
 }
 
-const logout = (): void => {
-  signOut(auth).then(() => {
+const logout = async (): Promise<void> => {
+  try {
+    await signOut(auth)
     closeDropdown()
     window.location.reload()
-  })
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 const toggleMobileNav = (): void => {

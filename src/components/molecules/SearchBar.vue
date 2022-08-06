@@ -1,12 +1,12 @@
 <template>
   <div
     :class="[
-      'z-[1] w-full rounded-full border-2 border-black h-16 bg-white flex items-center justify-between pr-2 gap-2',
+      'w-full rounded-full border-2 border-black h-16 bg-white flex items-center justify-between pr-2 gap-2',
       fullscreen ? 'max-w-5xl' : 'max-w-lg'
     ]"
   >
     <input
-      v-model="store.searchQuery"
+      v-model="searchQuery"
       placeholder="Search articles"
       class="w-[80%] h-full text-sm sm:text-base pl-6 border-black rounded-l-full placeholder:text-sm sm:placeholder:text-base outline-none focus:border focus:border-r-4"
     />
@@ -20,6 +20,7 @@
 import { watch } from 'vue'
 import { Icon } from '@iconify/vue'
 import { useStore } from './../../store'
+import { storeToRefs } from 'pinia'
 import { useRoute } from 'vue-router'
 
 defineProps<{
@@ -28,16 +29,23 @@ defineProps<{
 
 const route = useRoute()
 const store = useStore()
+const { searchQuery, recipes } = storeToRefs(store)
 
 watch(
-  () => store.searchQuery,
+  () => searchQuery.value,
   newValue => {
     if (newValue) {
-      store.searchedRecipes = store.recipes.filter(recipe =>
-        recipe.title.toLowerCase().includes(newValue.toLowerCase())
-      )
+      recipes.value.forEach(recipe => {
+        if (recipe.title.toLowerCase().includes(newValue.toLowerCase())) {
+          recipe.visible = true
+          return
+        }
+        recipe.visible = false
+      })
     } else {
-      store.searchedRecipes = []
+      recipes.value.forEach(recipe => {
+        recipe.visible = true
+      })
     }
   }
 )
@@ -46,8 +54,10 @@ watch(
 watch(
   () => route.fullPath,
   () => {
-    store.searchQuery = ''
-    store.searchedRecipes = []
+    searchQuery.value = ''
+    recipes.value.forEach(recipe => {
+      recipe.visible = true
+    })
   }
 )
 </script>

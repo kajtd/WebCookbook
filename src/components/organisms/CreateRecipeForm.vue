@@ -251,7 +251,7 @@ const updateImage = (e: Event) => {
   }
 }
 
-const deleteIngredient = (index: number) => {
+const deleteIngredient = (index: number): void => {
   recipe.value.ingredients.splice(index, 1)
 }
 
@@ -275,7 +275,8 @@ const createRecipe = async (): Promise<void> => {
     form.value?.reset()
   })
 }
-const handleSubmitForm = async () => {
+
+const handleSubmitForm = async (): Promise<void> => {
   if (
     !recipe.value.title ||
     !recipe.value.description ||
@@ -286,12 +287,15 @@ const handleSubmitForm = async () => {
     errorMessage.value = 'Please fill in all necessary fields'
     return
   }
-  await createRecipe().then(() => {
+  try {
+    await createRecipe()
     errorMessage.value = ''
     recipe.value = initialRecipeData
     recipe.value.ingredients = []
     emit('toggleForm')
-  })
+  } catch (error) {
+    errorMessage.value = 'Something went wrong'
+  }
 }
 
 const handleFormClose = (): void => {

@@ -1,4 +1,4 @@
-interface UserForm {
+interface LoginForm {
   value: string
   description: string
   email: string
@@ -7,7 +7,7 @@ interface UserForm {
   repeatedPassword?: string
   forgetPasswordButton?: boolean
   buttonText: string
-  submitFunction: (payload: Event) => void
+  submitFunction: () => void
 }
 
-export default UserForm
+export default LoginForm

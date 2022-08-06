@@ -59,11 +59,14 @@ import { onSnapshot, collection } from '@firebase/firestore'
 import { database } from '../../firebase'
 import RecipeTag from '../atoms/RecipeTag.vue'
 import Tag from '../../types/Tag'
+import { Recipe } from '../../types/Recipe'
 import { formatCookingTime, convertTimeToMinutes } from '../../utils/util'
 import { useStore } from '../../store'
 import { Icon } from '@iconify/vue'
+import { storeToRefs } from 'pinia'
 
 const store = useStore()
+const { recipes } = storeToRefs(store)
 
 const calories = ref(0)
 const cookingTime = ref(0)
@@ -71,13 +74,18 @@ const tags = ref<Tag[]>([])
 const activeTagId = ref('')
 const filtersVisible = ref(false)
 
+const validateRecipe = (recipe: Recipe): boolean => {
+  const validations: boolean[] = [
+    recipe.calories <= calories.value || calories.value === 0,
+    convertTimeToMinutes(recipe.cookingTime) <= cookingTime.value || cookingTime.value === 0,
+    recipe.tagId === activeTagId.value || activeTagId.value === ''
+  ]
+  return !validations.includes(false)
+}
+
 const filterRecipes = async (): Promise<void> => {
-  store.recipes.map(recipe => {
-    const tagValidation = recipe.tagId === activeTagId.value || activeTagId.value === ''
-    const caloriesValidation = Number(recipe.calories) <= calories.value || calories.value === 0
-    const cookingTimeValidation =
-      convertTimeToMinutes(recipe.cookingTime) <= cookingTime.value || cookingTime.value === 0
-    if (tagValidation && caloriesValidation && cookingTimeValidation) {
+  recipes.value.forEach(recipe => {
+    if (validateRecipe(recipe)) {
       recipe.visible = true
       return
     }
@@ -91,7 +99,7 @@ const resetRecipes = (): void => {
   calories.value = 0
   cookingTime.value = 0
   activeTagId.value = ''
-  store.recipes.map(recipe => {
+  recipes.value.forEach(recipe => {
     recipe.visible = true
   })
   // toggle sidebar on mobile

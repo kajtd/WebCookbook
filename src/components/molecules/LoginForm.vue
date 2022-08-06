@@ -84,12 +84,9 @@ import { ref } from 'vue'
 import AppInput from '../atoms/AppInput.vue'
 import AppButton from '../atoms/AppButton.vue'
 import { validateEmail } from '../../utils/util'
-import UserForm from './../../types/UserForm'
-import { useStore } from './../../store/index'
+import LoginForm from './../../types/LoginForm'
 
-const store = useStore()
-
-const availableForms = ref<UserForm[]>([
+const availableForms = ref<LoginForm[]>([
   {
     value: 'sign_in',
     description: 'Sign in to create recipes!',
@@ -119,69 +116,57 @@ const availableForms = ref<UserForm[]>([
   }
 ])
 
-const form = ref<UserForm>(availableForms.value[0])
+const form = ref<LoginForm>(availableForms.value[0])
 const errorMessage = ref('')
 const successMessage = ref('')
 
 const clearForm = (): void => {
-  if (form.value.email !== undefined) form.value.email = ''
-  if (form.value.password !== undefined) form.value.password = ''
-  if (form.value.repeatedPassword !== undefined) form.value.repeatedPassword = ''
+  form.value.email = ''
+  form.value.password = ''
+  form.value.repeatedPassword = ''
   errorMessage.value = ''
   successMessage.value = ''
 }
 
-const signInWithGoogle = (): void => {
-  store.loading = true
-  signInWithPopup(auth, provider)
-    .then(() => {
-      store.loading = false
-      window.location.reload()
-    })
-    .catch(error => {
-      store.loading = false
-      console.log(error)
-      errorMessage.value = 'Something went wrong, please try again'
-    })
+const signInWithGoogle = async (): Promise<void> => {
+  try {
+    await signInWithPopup(auth, provider)
+    window.location.reload()
+  } catch (error) {
+    console.log(error)
+    errorMessage.value = 'Something went wrong, please try again'
+  }
 }
 
 const createNewUser = async (): Promise<void> => {
-  store.loading = true
-  await createUserWithEmailAndPassword(auth, form.value.email, form.value.password as string)
-    .then(() => {
-      if (auth.currentUser) {
-        updateProfile(auth.currentUser, {
-          displayName: form.value.login,
-          photoURL: `https://ui-avatars.com/api/?name=${form.value.login}&background=E1434B&color=fff`
-        })
-      }
+  try {
+    await createUserWithEmailAndPassword(auth, form.value.email, form.value.password as string)
+    if (auth.currentUser) {
+      await updateProfile(auth.currentUser, {
+        displayName: form.value.login,
+        photoURL: `https://ui-avatars.com/api/?name=${form.value.login}&background=E1434B&color=fff`
+      })
       clearForm()
-      store.loading = false
       window.location.reload()
-    })
-    .catch(error => {
-      console.log(error)
-      store.loading = false
-      errorMessage.value = 'Unable to create a new user, please try again'
-    })
+    }
+  } catch (error) {
+    console.log(error)
+    errorMessage.value = 'Unable to create a new user, please try again'
+  }
 }
 
-const signInWithPassword = (): void => {
-  store.loading = true
-  signInWithEmailAndPassword(auth, form.value.email, form.value.password as string)
-    .then(() => {
-      clearForm()
-      store.loading = false
-      window.location.reload()
-    })
-    .catch(error => {
-      console.log(error)
-      store.loading = false
-      errorMessage.value = 'Unable to sign in, please try again'
-    })
+const signInWithPassword = async (): Promise<void> => {
+  try {
+    await signInWithEmailAndPassword(auth, form.value.email, form.value.password as string)
+    clearForm()
+    window.location.reload()
+  } catch (error) {
+    console.log(error)
+    errorMessage.value = 'Unable to sign in, please try again'
+  }
 }
 
-const handleSignInSubmit = () => {
+const handleSignInSubmit = async (): Promise<void> => {
   if (!validateEmail(form.value.email)) {
     errorMessage.value = 'Please enter a valid email'
     return
@@ -192,10 +177,10 @@ const handleSignInSubmit = () => {
     return
   }
 
-  signInWithPassword()
+  await signInWithPassword()
 }
 
-const handleSignUpSubmit = () => {
+const handleSignUpSubmit = async (): Promise<void> => {
   if (!validateEmail(form.value.email)) {
     errorMessage.value = 'Please enter a valid email'
     return
@@ -204,22 +189,21 @@ const handleSignUpSubmit = () => {
     errorMessage.value = 'Please enter valid passwords that match'
     return
   }
-  createNewUser()
+  await createNewUser()
 }
 
-const handlePasswordResetSubmit = () => {
+const handlePasswordResetSubmit = async (): Promise<void> => {
   if (!validateEmail(form.value.email)) {
     errorMessage.value = 'Please enter a valid email'
     return
   }
-  sendPasswordResetEmail(auth, form.value.email)
-    .then(() => {
-      clearForm()
-      successMessage.value = 'Password reset email sent'
-    })
-    .catch(error => {
-      console.log(error)
-      errorMessage.value = 'Something went wrong, please try again'
-    })
+  try {
+    await sendPasswordResetEmail(auth, form.value.email)
+    clearForm()
+    successMessage.value = 'Password reset email sent'
+  } catch (error) {
+    console.log(error)
+    errorMessage.value = 'Something went wrong, please try again'
+  }
 }
 </script>
