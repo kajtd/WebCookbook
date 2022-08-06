@@ -4,20 +4,16 @@
     <slot />
     <AppFooter @toggle-login-popup="toggleLoginPopup" />
     <AppButton
-      v-if="store.user.uid"
+      v-if="user.uid"
       additionalClass="!rounded-full bottom-4 right-4 fixed h-16 w-16 !p-0 !shadow-xl"
-      @click="store.toggleCreateRecipeForm"
+      @click="toggleCreateRecipeForm"
     >
       <Icon icon="akar-icons:circle-plus" class="text-2xl" />
     </AppButton>
     <AppPopup :popup-visible="loginPopupVisible" @toggle-popup="toggleLoginPopup">
       <LoginForm />
     </AppPopup>
-    <CreateRecipeForm
-      v-if="store.user.uid"
-      :form-visible="store.processingRecipe"
-      @toggle-form="store.toggleCreateRecipeForm"
-    />
+    <CreateRecipeForm v-if="user.uid" :form-visible="processingRecipe" @toggle-form="toggleCreateRecipeForm" />
   </div>
 </template>
 
@@ -31,9 +27,12 @@ import LoginForm from '../molecules/LoginForm.vue'
 import AppButton from '../atoms/AppButton.vue'
 import CreateRecipeForm from '../organisms/CreateRecipeForm.vue'
 import { useStore } from './../../store'
+import { storeToRefs } from 'pinia'
 
 const loginPopupVisible = ref(false)
 const store = useStore()
+const { user, processingRecipe } = storeToRefs(store)
+const { toggleCreateRecipeForm } = useStore()
 
 const toggleLoginPopup = (): void => {
   loginPopupVisible.value = !loginPopupVisible.value
