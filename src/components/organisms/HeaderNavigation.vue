@@ -1,6 +1,6 @@
 <template>
   <header
-    class="sticky top-0 flex items-center justify-between w-full mx-auto px-4 md:px-8 py-6 bg-orangeLight border-b-4 border-black z-[3]"
+    class="z-20 sticky top-0 flex items-center justify-between w-full mx-auto px-4 md:px-8 py-6 bg-orangeLight border-b-4 border-black"
   >
     <div class="max-w-5xl w-full mx-auto flex items-center justify-between">
       <AppLogo />
@@ -11,19 +11,15 @@
             <AppNavigationLink :link="link" />
           </li>
           <li>
-            <AppButton v-if="!store.user.uid" @click="$emit('toggleLoginPopup')"> Login </AppButton>
+            <AppButton v-if="!user.uid" @click="$emit('toggleLoginPopup')"> Login </AppButton>
             <div v-else class="relative w-full flex items-center justify-center">
               <button @click="logoutDropdownVisible = true">
-                <img
-                  v-if="store.user.photoURL"
-                  :src="store.user.photoURL"
-                  class="rounded-full h-10 w-10 border-2 border-black"
-                />
+                <img v-if="user.photoURL" :src="user.photoURL" class="rounded-full h-10 w-10 border-2 border-black" />
               </button>
               <AppDropdownMenu :open.sync="logoutDropdownVisible" @close="closeDropdown">
                 <div class="gap-2 w-full px-8 py-4">
                   <p class="font-semibold text-base pb-2 border-b-2 border-black mb-5 text-center">
-                    {{ store.user.displayName }}
+                    {{ user.displayName }}
                   </p>
                   <AppButton @click="logout">Logout</AppButton>
                 </div>
@@ -32,7 +28,7 @@
           </li>
         </ul>
       </nav>
-      <transition name="mobile-nav">
+      <Transition name="mobile-nav">
         <nav v-show="mobileNav" class="md:hidden flex flex-col h-full fixed bottom-0 left-0 p-8 w-full bg-white z-30">
           <ul class="mt-auto">
             <li
@@ -46,7 +42,7 @@
             </li>
           </ul>
           <AppButton
-            v-if="Object.keys(store.user).length === 0 && store.user.constructor === Object"
+            v-if="!user.uid"
             additionalClass="mt-auto self-start text-xl"
             @click="
               () => {
@@ -59,11 +55,7 @@
           </AppButton>
           <div v-else class="relative w-full mt-auto">
             <button @click="logoutDropdownVisible = true">
-              <img
-                v-if="store.user.photoURL"
-                :src="store.user.photoURL"
-                class="rounded-full h-10 w-10 border-2 border-black"
-              />
+              <img v-if="user.photoURL" :src="user.photoURL" class="rounded-full h-10 w-10 border-2 border-black" />
             </button>
             <AppDropdownMenu
               additionalClass="left-4 bottom-4 right-auto top-auto"
@@ -72,14 +64,14 @@
             >
               <div class="gap-2 w-full px-8 py-4">
                 <p class="font-semibold text-base pb-2 border-b-2 border-black mb-5 text-center">
-                  {{ store.user.displayName }}
+                  {{ user.displayName }}
                 </p>
                 <AppButton @click="logout">Logout</AppButton>
               </div>
             </AppDropdownMenu>
           </div>
         </nav>
-      </transition>
+      </Transition>
     </div>
   </header>
 </template>
@@ -94,11 +86,13 @@ import AppDropdownMenu from '../atoms/AppDropdownMenu.vue'
 import { useStore } from './../../store/index'
 import Link from './../../types/Link'
 import { signOut } from 'firebase/auth'
+import { storeToRefs } from 'pinia'
 import { auth } from './../../firebase'
 
 defineEmits(['toggleLoginPopup'])
 
 const store = useStore()
+const { user } = storeToRefs(store)
 
 const mobileNav = ref(false)
 const logoutDropdownVisible = ref(false)
