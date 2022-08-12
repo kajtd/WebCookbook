@@ -71,15 +71,14 @@
 </template>
 
 <script setup lang="ts">
+import { auth, provider } from '../../firebase'
 import {
-  auth,
-  provider,
   signInWithPopup,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   updateProfile
-} from '../../firebase'
+} from 'firebase/auth'
 import { ref } from 'vue'
 import AppInput from '../atoms/AppInput.vue'
 import AppButton from '../atoms/AppButton.vue'
