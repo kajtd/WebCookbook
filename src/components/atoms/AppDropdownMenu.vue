@@ -1,13 +1,6 @@
 <template>
   <div ref="container" :class="['absolute right-2 top-2 bg-white rounded-lg shadow-lg', additionalClass]" tabindex="0">
-    <div
-      v-if="open"
-      class="text-base"
-      role="menu"
-      aria-orientation="vertical"
-      v-click-outside="handleClickOutside"
-      aria-labelledby="options-menu"
-    >
+    <div v-if="open" class="text-base" role="menu" aria-orientation="vertical" v-click-outside="handleClickOutside">
       <div v-if="items" class="divide-y-2 divide-gray-900 z-30 shadow-lg rounded-lg">
         <button
           v-for="(item, index) of items"

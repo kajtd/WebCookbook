@@ -1,18 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
 
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-  updateProfile,
-  setPersistence,
-  browserLocalPersistence,
-  onAuthStateChanged
-} from 'firebase/auth'
+import { getAuth, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth'
 
 import { getFirestore, doc, collection, onSnapshot, setDoc } from 'firebase/firestore'
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
@@ -50,21 +39,4 @@ onAuthStateChanged(auth, user => {
   }
 })
 
-export {
-  auth,
-  provider,
-  signInWithPopup,
-  database,
-  doc,
-  uploadBytes,
-  getDownloadURL,
-  ref,
-  setDoc,
-  collection,
-  onSnapshot,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
-  storage,
-  updateProfile
-}
+export { auth, provider, database, doc, uploadBytes, getDownloadURL, ref, setDoc, collection, onSnapshot, storage }

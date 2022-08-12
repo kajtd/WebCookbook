@@ -29,7 +29,7 @@ const store = useStore()
 
 const { user } = storeToRefs(store)
 
-const initialCommentData = {
+const initialCommentData: Comment = {
   text: '',
   blogId: route.params.blogid as string,
   authorName: '',

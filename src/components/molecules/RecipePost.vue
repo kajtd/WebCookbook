@@ -10,7 +10,7 @@
     >
       <Icon icon="bi:three-dots" color="black" />
     </button>
-    <AppDropdown :open.sync="editDropdownVisible" :items="dropdownItems" @close="closeDropdown" />
+    <AppDropdownMenu :open.sync="editDropdownVisible" :items="dropdownItems" @close="closeDropdown" />
     <router-link :to="`/recipes/${id}`" class="w-full h-3/4">
       <div class="flex items-center justify-between pl-2 py-3 w-full h-full">
         <img :src="image" :alt="title" class="h-full rounded-xl object-cover min-w-[120px] w-full" />
@@ -24,7 +24,7 @@
       </div>
     </router-link>
     <footer class="w-full h-1/4 flex items-center justify-between px-2 py-1 border-t-2 border-black">
-      <p class="font-bold text-sm ml-1">{{ likes.length }} likes</p>
+      <p class="font-bold text-sm ml-1">{{ `${likes.length} ${formatLikesTitle(likes.length)}` }}</p>
       <div class="ml-auto flex gap-1">
         <AppButton
           aria-label="comment recipe"
@@ -45,11 +45,12 @@
 import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
 import AppButton from '../atoms/AppButton.vue'
-import AppDropdown from '../atoms/AppDropdown.vue'
+import AppDropdownMenu from '../atoms/AppDropdownMenu.vue'
 import { useStore } from './../../store'
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore'
 import { database } from './../../firebase'
 import { Recipe } from './../../types/Recipe'
+import { formatLikesTitle } from './../../utils/util'
 
 const store = useStore()
 
@@ -75,9 +76,12 @@ const likeRecipe = async (): Promise<void> => {
   const recipeIndex: number = store.recipes.findIndex((recipe: Recipe) => recipe.id === props.id)
   store.recipes[recipeIndex].likes = likes
 
-  await updateDoc(recipeDocRef, { likes }).then(() => {
+  try {
+    await updateDoc(recipeDocRef, { likes })
     liked.value = true
-  })
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 const dislikeRecipe = async (): Promise<void> => {
@@ -88,9 +92,12 @@ const dislikeRecipe = async (): Promise<void> => {
   const recipeIndex: number = store.recipes.findIndex((recipe: Recipe) => recipe.id === props.id)
   store.recipes[recipeIndex].likes = likes
 
-  await updateDoc(recipeDocRef, { likes }).then(() => {
+  try {
+    await updateDoc(recipeDocRef, { likes })
     liked.value = false
-  })
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 const handleLikeButtonClick = (): void => {

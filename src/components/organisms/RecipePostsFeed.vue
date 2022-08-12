@@ -1,11 +1,11 @@
 <template>
-  <section
+  <div
     v-if="recipesVisible"
     class="w-full grid grid-cols-1 lg:grid-cols-[320px_320px] gap-2 justify-end"
     ref="scrollComponent"
   >
     <RecipePost
-      v-for="recipe in recipesToShow"
+      v-for="recipe in recipes"
       :key="recipe.id"
       :id="recipe.id"
       :title="recipe.title"
@@ -16,13 +16,13 @@
       :likes="recipe.likes"
       :visible="recipe.visible"
     />
-  </section>
-  <section v-else-if="store.loading" class="w-full flex justify-center items-center">
+  </div>
+  <div v-else-if="loading" class="w-full flex justify-center items-center">
     <AppLoader class="mx-auto mt-3 md:col-span-full" />
-  </section>
-  <section v-else class="w-full flex items-start justify-center min-h-[300px] mt-8">
+  </div>
+  <div v-else class="w-full flex items-start justify-center min-h-[300px] mt-8">
     <h3 class="text-3xl font-semibold">No recipes found 😕</h3>
-  </section>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -33,18 +33,17 @@ import { useStore } from './../../store'
 import RecipePost from './../molecules/RecipePost.vue'
 import { Recipe } from './../../types/Recipe'
 import AppLoader from '../atoms/AppLoader.vue'
-const store = useStore()
+import { storeToRefs } from 'pinia'
 
+const store = useStore()
+const { recipes, loading } = storeToRefs(store)
 const latestDocKey = ref<Date>()
 const scrollComponent = ref<HTMLDivElement>()
 const postsLoaded = ref(false)
 const currentBatch = ref(0)
-const allBatches = ref<Number[]>([])
+const allBatches = ref<number[]>([])
 
-const recipesToShow = computed(() => (store.searchQuery ? store.searchedRecipes : store.recipes))
-const recipesVisible = computed(
-  () => recipesToShow.value.length > 0 && recipesToShow.value.some(recipe => recipe.visible)
-)
+const recipesVisible = computed(() => recipes.value.length > 0 && recipes.value.some(recipe => recipe.visible))
 
 onMounted(async () => {
   const customQuery = query(collection(database, 'Recipes'), orderBy('createdAt', 'desc'), limit(12))
@@ -54,18 +53,18 @@ onMounted(async () => {
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
-  store.recipes = []
+  recipes.value = []
 })
 
 const fetchRecipes = async (customQuery: Query<DocumentData>): Promise<void> => {
-  store.loading = true
+  loading.value = true
   let posts: Recipe[] = []
   const querySnapshot = await getDocs(customQuery)
   querySnapshot.forEach(doc => {
     posts.push(doc.data() as Recipe)
   })
-  store.recipes = [...store.recipes, ...posts]
-  store.loading = false
+  recipes.value = [...recipes.value, ...posts]
+  loading.value = false
   latestDocKey.value = posts[posts.length - 1]?.createdAt
   if (querySnapshot.empty) postsLoaded.value = true
 }
@@ -82,7 +81,7 @@ const loadMoreRecipes = async (): Promise<void> => {
   currentBatch.value++
 }
 
-const handleScroll = async () => {
+const handleScroll = async (): Promise<void> => {
   if (!scrollComponent.value) return
   let element = scrollComponent.value as HTMLDivElement
   const newBatch = allBatches.value.indexOf(currentBatch.value) === -1

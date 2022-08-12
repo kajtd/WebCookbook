@@ -1,6 +1,6 @@
 <template>
   <transition name="create-recipe-form">
-    <div v-show="formVisible" class="fixed top-0 left-0 right-0 bottom-0 z-50 w-full bg-white">
+    <div v-show="formVisible" class="fixed top-0 left-0 right-0 bottom-0 z-50 w-full overflow-y-auto bg-white">
       <article class="flex flex-col justify-between items-center relative">
         <header class="w-full bg-blueLight border-b-4 border-black">
           <div class="max-w-5xl flex items-center justify-between py-6 px-4 md:px-8 mx-auto">
@@ -150,15 +150,14 @@
             <div class="flex flex-col mt-5">
               <label for="description" class="font-semibold text-lg mb-1">
                 Image
-                <span v-show="!store.editingRecipe" class="text-red-500 font-bold relative bottom-1 right-1">*</span>
+                <span v-show="!editingRecipe" class="text-red-500 font-bold relative bottom-1 right-1">*</span>
               </label>
               <input
                 id="image"
                 name="image"
                 type="file"
-                ref="file"
                 class="mb-3"
-                :required="!store.editingRecipe"
+                :required="!editingRecipe"
                 @change="updateImage"
               />
             </div>
@@ -190,6 +189,7 @@ import { Icon } from '@iconify/vue'
 import { uid } from 'uid'
 import Tag from './../../types/Tag'
 import RecipeTag from './../atoms/RecipeTag.vue'
+import { storeToRefs } from 'pinia'
 
 defineProps<{
   formVisible: boolean
@@ -198,11 +198,13 @@ defineProps<{
 const emit = defineEmits(['toggleForm'])
 
 const store = useStore()
+const { editingRecipe, processedRecipe, user, recipes } = storeToRefs(store)
+const { setProcessedRecipe } = useStore()
 const errorMessage = ref('')
-const file = ref()
+const file = ref<File>()
 const tags = ref<Tag[]>([])
 const form = ref<HTMLFormElement>()
-const initialRecipeData = {
+const initialRecipeData: Recipe = {
   id: '',
   title: '',
   description: '',
@@ -226,13 +228,13 @@ const recipe = ref<Recipe>({ ...initialRecipeData })
 
 // update recipe whenever user wants to edit it
 watch(
-  () => store.processedRecipe,
+  () => processedRecipe.value,
   r => {
     if (r !== undefined) recipe.value = r
   }
 )
 
-const addNewIngredient = () => {
+const addNewIngredient = (): void => {
   recipe.value.ingredients.push({
     name: '',
     amount: 0
@@ -243,60 +245,78 @@ const setActiveTagId = (id: string): void => {
   recipe.value.tagId = id
 }
 
-const updateImage = (e: Event) => {
+const updateImage = (e: Event): void => {
+  errorMessage.value = ''
   const target = e.target as HTMLInputElement
   const files = target.files
-  if (files) {
-    file.value = files[0]
+  if (!files) return
+  if (files[0].size > 1048576) {
+    errorMessage.value = 'Image size should be less than 1MB'
+    target.value = ''
+    return
   }
+  file.value = files[0]
 }
 
-const deleteIngredient = (index: number) => {
+const deleteIngredient = (index: number): void => {
   recipe.value.ingredients.splice(index, 1)
 }
 
-const createRecipe = async (): Promise<void> => {
-  if (!recipe.value.id) recipe.value.id = uid()
-  if (file.value !== null) {
-    const photoId = uid()
-    const imageRef = storageRef(storage, `images/${photoId}`)
-    await uploadBytes(imageRef, file.value)
-    await getDownloadURL(storageRef(storage, `images/${photoId}`)).then(async url => {
-      recipe.value.image = url
-    })
-  }
-  recipe.value.authorName = store.user.displayName as string
-  recipe.value.authorId = store.user.uid as string
-  recipe.value.authorPhotoUrl = store.user.photoURL as string
-  if (!store.editingRecipe) store.recipes.unshift(recipe.value)
-  await setDoc(doc(database, 'Recipes', recipe.value.id), recipe.value).then(() => {
-    store.setProcessedRecipe('', { ...initialRecipeData })
-    store.editingRecipe = false
-    form.value?.reset()
-  })
+const validateRecipe = (recipe: Recipe): boolean => {
+  const validations: boolean[] = [
+    !recipe.title,
+    !recipe.description,
+    !recipe.preparation,
+    !recipe.ingredients.length,
+    !recipe.tagId,
+    !file.value
+  ]
+  return !validations.includes(false)
 }
-const handleSubmitForm = async () => {
-  if (
-    !recipe.value.title ||
-    !recipe.value.description ||
-    recipe.value.ingredients.length === 0 ||
-    !recipe.value.preparation ||
-    !recipe.value.tagId
-  ) {
+
+const createRecipe = async (): Promise<void> => {
+  try {
+    if (!recipe.value.id) recipe.value.id = uid()
+    if (file.value) {
+      const photoId = uid()
+      const imageRef = storageRef(storage, `images/${photoId}`)
+      await uploadBytes(imageRef, file.value as File)
+      await getDownloadURL(storageRef(storage, `images/${photoId}`)).then(async url => {
+        recipe.value.image = url
+      })
+    }
+    recipe.value.authorName = user.value.displayName as string
+    recipe.value.authorId = user.value.uid as string
+    recipe.value.authorPhotoUrl = user.value.photoURL as string
+    if (!editingRecipe.value) recipes.value.unshift(recipe.value)
+    await setDoc(doc(database, 'Recipes', recipe.value.id), recipe.value)
+    setProcessedRecipe('', { ...initialRecipeData })
+    editingRecipe.value = false
+    form.value?.reset()
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const handleSubmitForm = async (): Promise<void> => {
+  if (validateRecipe(recipe.value) || errorMessage.value !== '') {
     errorMessage.value = 'Please fill in all necessary fields'
     return
   }
-  await createRecipe().then(() => {
+  try {
+    await createRecipe()
     errorMessage.value = ''
     recipe.value = initialRecipeData
     recipe.value.ingredients = []
     emit('toggleForm')
-  })
+  } catch (error) {
+    errorMessage.value = 'Something went wrong'
+  }
 }
 
 const handleFormClose = (): void => {
-  store.setProcessedRecipe('', { ...initialRecipeData })
-  store.editingRecipe = false
+  setProcessedRecipe('', { ...initialRecipeData })
+  editingRecipe.value = false
   emit('toggleForm')
 }
 

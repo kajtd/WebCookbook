@@ -1,12 +1,8 @@
 <template>
-  <router-link
-    v-if="href"
-    :class="['btn-primary', additionalClass, { '!bg-blue-300 !text-black': secondary }]"
-    :to="href"
-  >
+  <router-link v-if="href" :class="['app-button', additionalClass, secondary ? 'secondary' : 'primary']" :to="href">
     <slot />
   </router-link>
-  <button v-else :class="['btn-primary', additionalClass, { '!bg-blue-300 !text-black': secondary }]" :type="type">
+  <button v-else :class="['app-button', additionalClass, secondary ? 'secondary' : 'primary']" :type="type || 'button'">
     <slot />
   </button>
 </template>
@@ -21,7 +17,13 @@ defineProps<{
 </script>
 
 <style scoped>
-.btn-primary {
-  @apply border-2 border-gray-900 bg-primary text-gray-100 font-semibold py-2 px-6 rounded-lg text-sm flex items-center justify-center;
+.app-button {
+  @apply border-2 border-gray-900  font-semibold py-2 px-6 rounded-lg text-sm flex items-center justify-center;
+}
+.primary {
+  @apply bg-primary text-gray-100;
+}
+.secondary {
+  @apply bg-blue-300 text-black;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <FullPageTemplate>
     <main class="my-[5vh] px-4 w-full text-center">
-      <section class="mx-auto p-4 sm:p-12 w-full max-w-5xl flex flex-col items-center gap-8 z-[-1]">
+      <section class="mx-auto p-4 sm:p-12 w-full max-w-5xl flex flex-col items-center gap-8">
         <div class="my-12">
           <h2
             class="text-3xl sm:text-5xl font-bold relative before:rounded-lg before:h-2 before:w-full before:left-0 before:absolute before:-bottom-6 before:bg-blueLight"

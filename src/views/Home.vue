@@ -2,10 +2,10 @@
   <FullPageTemplate>
     <main class="w-full flex flex-col justify-center items-center mb-20">
       <HeroSection />
-      <div class="flex justify-center pt-8 px-4 w-full max-w-5xl gap-12">
+      <section class="flex justify-center pt-8 px-4 w-full max-w-5xl gap-12">
         <AppFilters />
         <RecipePostsFeed />
-      </div>
+      </section>
     </main>
   </FullPageTemplate>
 </template>
