@@ -15,9 +15,9 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watchEffect } from 'vue'
 import CommentBox from './../molecules/CommentBox.vue'
 import UserComment from './../molecules/UserComment.vue'
-import { ref, watchEffect } from 'vue'
 import { database } from './../../firebase'
 import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestore'
 import Comment from './../../types/Comment'

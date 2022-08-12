@@ -65,7 +65,7 @@ const route = useRoute()
 const blogId = ref('')
 const recipe = ref<Recipe>({} as Recipe)
 
-const tweetLink =
+const tweetLink: string =
   'https://twitter.com/intent/tweet?text=' +
   encodeURIComponent('Check out this recipe: ' + 'pageName/' + route.fullPath)
 
