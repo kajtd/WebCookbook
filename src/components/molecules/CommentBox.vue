@@ -7,8 +7,9 @@
       placeholder="Enter comment!"
       class="w-full sm:!text-xl !border-2"
       :rows="4"
+      :disabled="!user.uid"
     />
-    <AppButton type="submit">Post comment!</AppButton>
+    <AppButton type="submit" :disabled="!user.uid">Post comment!</AppButton>
   </form>
 </template>
 
