@@ -13,8 +13,13 @@
           <li>
             <AppButton v-if="!user.uid" @click="$emit('toggleLoginPopup')"> Login </AppButton>
             <div v-else class="relative w-full flex items-center justify-center">
-              <button @click="logoutDropdownVisible = true">
-                <img v-if="user.photoURL" :src="user.photoURL" class="rounded-full h-10 w-10 border-2 border-black" />
+              <button aria-label="avatar" @click="logoutDropdownVisible = true">
+                <img
+                  v-if="user.photoURL && user.displayName"
+                  :src="user.photoURL"
+                  :alt="user.displayName"
+                  class="rounded-full h-10 w-10 border-2 border-black"
+                />
               </button>
               <AppDropdownMenu :open.sync="logoutDropdownVisible" @close="closeDropdown">
                 <div class="gap-2 w-full px-8 py-4">

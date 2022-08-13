@@ -5,6 +5,7 @@
     <AppFooter @toggle-login-popup="toggleLoginPopup" />
     <AppButton
       v-if="user.uid"
+      ariaLabel="toggle create recipe form"
       additionalClass="!rounded-full bottom-4 right-4 fixed h-16 w-16 !p-0 !shadow-xl"
       @click="toggleCreateRecipeForm"
     >

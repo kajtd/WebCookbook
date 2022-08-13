@@ -80,7 +80,12 @@
                   Ingredients
                   <span class="text-red-500 font-bold relative bottom-1 right-1">*</span>
                 </span>
-                <AppButton additionalClass="mt-4 mb-1 self-end !p-1" type="button" @click="addNewIngredient">
+                <AppButton
+                  ariaLabel="add ingredient"
+                  additionalClass="mt-4 mb-1 self-end !p-1"
+                  type="button"
+                  @click="addNewIngredient"
+                >
                   <Icon icon="eva:plus-circle-outline" class="text-lg" />
                 </AppButton>
               </div>
@@ -106,7 +111,11 @@
                     placeholder="Amount"
                     class="w-16 md:w-auto"
                   />
-                  <AppButton additionalClass="w-7 h-7 !px-1 mb-3" @click="deleteIngredient(index)">
+                  <AppButton
+                    ariaLabel="delete ingredient"
+                    additionalClass="w-7 h-7 !px-1 mb-3"
+                    @click="deleteIngredient(index)"
+                  >
                     <Icon icon="akar-icons:trash-can" />
                   </AppButton>
                 </div>

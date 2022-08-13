@@ -27,13 +27,13 @@
       <p class="font-bold text-sm ml-1">{{ `${likes.length} ${formatLikesTitle(likes.length)}` }}</p>
       <div class="ml-auto flex gap-1">
         <AppButton
-          aria-label="comment recipe"
+          ariaLabel="comment recipe"
           additionalClass="w-7 h-7 !px-1 !bg-blue-300"
           :href="`/recipes/${id}#comments`"
         >
           <Icon icon="akar-icons:comment" color="black" />
         </AppButton>
-        <AppButton aria-label="like button" additionalClass="w-7 h-7 !px-1" @click="handleLikeButtonClick">
+        <AppButton ariaLabel="like button" additionalClass="w-7 h-7 !px-1" @click="handleLikeButtonClick">
           <Icon :icon="liked ? 'ant-design:heart-filled' : 'ant-design:heart-outlined'" />
         </AppButton>
       </div>

@@ -2,7 +2,12 @@
   <router-link v-if="href" :class="['app-button', additionalClass, secondary ? 'secondary' : 'primary']" :to="href">
     <slot />
   </router-link>
-  <button v-else :class="['app-button', additionalClass, secondary ? 'secondary' : 'primary']" :type="type || 'button'">
+  <button
+    v-else
+    :class="['app-button', additionalClass, secondary ? 'secondary' : 'primary']"
+    :type="type || 'button'"
+    :aria-label="ariaLabel"
+  >
     <slot />
   </button>
 </template>
@@ -13,6 +18,7 @@ defineProps<{
   secondary?: boolean
   type?: 'button' | 'submit' | 'reset'
   href?: string
+  ariaLabel?: string
 }>()
 </script>
 
