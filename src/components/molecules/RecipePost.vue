@@ -33,7 +33,12 @@
         >
           <Icon icon="akar-icons:comment" color="black" />
         </AppButton>
-        <AppButton ariaLabel="like button" additionalClass="w-7 h-7 !px-1" @click="handleLikeButtonClick">
+        <AppButton
+          ariaLabel="like button"
+          additionalClass="w-7 h-7 !px-1"
+          :disabled="!store.user.uid"
+          @click="handleLikeButtonClick"
+        >
           <Icon :icon="liked ? 'ant-design:heart-filled' : 'ant-design:heart-outlined'" />
         </AppButton>
       </div>
